@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Embedded-Test</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type="module" src="/src/client/embedded/EmbeddedStarter.ts"></script>
+    <!-- <script>
+        window.online_ide_onReady = () => {
+            let ide = window.online_ide_access.getIDE('abcd');
+            ide.registerOnRunExitListener((exitStatus)=>{
+                console.log(`overall: ${exitStatus.testProgress.overall} passed: ${exitStatus.testProgress.passed} failed: ${exitStatus.testProgress.failed}`);
+                console.log(exitStatus);
+            });
+        }
+    </script> -->
+</head>
+
+<body>
+    <h1>Erstes Beispiel</h1>
+
+    <div class="java-online" style="width: calc(100% - 10px); height: 500px; margin-left: 5px" data-java-online="{
+        'id': 'abcd',
+        'speed': 'max',
+        'withFileList': true,
+        'hideEditor': false,
+        'hideStartPanel': false,
+        'libraries': [''],
+        'spritesheetURL': '/assets/test-spritesheets/Campfire.zip',
+        'settings': {
+            'compiler.shadowedSymbolErrorLevel': 'error',
+            'compiler.equalityOperatorForStringsCompares': 'references'
+        },
+        'withClassDiagram': true,
+        'enableRunExitStatusAccess': true
+
+    }">
+        <script type="text/plain" title="Program.java" data-type="java">
+           for(int i = 0; i < 10; i++){
+              println(i);
+           }
+           System.exit(0);            
+        </script>
+    </div>
+
+
+
+
+</body>
+
+</html>

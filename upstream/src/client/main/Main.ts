@@ -1,0 +1,488 @@
+import jQuery from 'jquery';
+import { BreakpointManager } from '../../compiler/common/BreakpointManager.js';
+import { Compiler } from '../../compiler/common/Compiler.js';
+import { JavaDebugger } from '../../compiler/java/debugger/JavaDebugger.js';
+import { Executable } from '../../compiler/common/Executable.js';
+import { ActionManager } from '../../compiler/common/interpreter/ActionManager.js';
+import { GraphicsManager } from '../../compiler/common/interpreter/GraphicsManager.js';
+import { Interpreter } from '../../compiler/common/interpreter/Interpreter.js';
+import { KeyboardManager } from '../../compiler/common/interpreter/KeyboardManager.js';
+import { ProgrammingLanguage } from '../../compiler/common/programminglanguage/ProgrammingLanguage.js';
+import { EditorOpenerProvider } from '../../compiler/common/monacoproviders/EditorOpenerProvider.js';
+import { ErrorMarker } from '../../compiler/common/monacoproviders/ErrorMarker.js';
+import { ProgramPointerManager } from '../../compiler/common/monacoproviders/ProgramPointerManager.js';
+import { IRange, Range } from '../../compiler/common/range/Range.js';
+import { checkIfMousePresent, findGetParameter } from "../../tools/HtmlTools.js";
+import { ClassData, UserData, WorkspaceData, Workspaces, type GuiState } from "../communication/Data.js";
+import { NetworkManager } from "../communication/NetworkManager.js";
+import { PushClientManager } from '../communication/pushclient/PushClientManager.js';
+import { SynchronizationManager } from "../repository/synchronize/RepositorySynchronizationManager.js";
+import { RepositoryCheckoutManager } from "../repository/update/RepositoryCheckoutManager.js";
+import { RepositoryCreateManager } from "../repository/update/RepositoryCreateManager.js";
+import { RepositorySettingsManager } from "../repository/update/RepositorySettingsManager.js";
+import { SpriteManager } from "../spritemanager/SpriteManager.js";
+import { GUIFile } from '../workspace/File.js';
+import { InconsistencyFixer } from "../workspace/InconsistencyFixer.js";
+import { Workspace } from "../workspace/Workspace.js";
+import { BottomDiv } from "./gui/BottomDiv.js";
+import { Editor } from "./gui/Editor.js";
+import { FileManager } from './gui/FileManager.js';
+import { Helper } from "./gui/Helper.js";
+import { InputManager } from './gui/InputManager.js';
+import { MainMenu } from "./gui/MainMenu.js";
+import { PrintManager } from './gui/PrintManager.js';
+import { ProgramControlButtons } from './gui/ProgramControlButtons.js';
+import { ProjectExplorer } from "./gui/ProjectExplorer.js";
+import { RightDiv } from "./gui/RightDiv.js";
+import { Sliders } from "./gui/Sliders.js";
+import { TeacherExplorer } from "./gui/TeacherExplorer.js";
+import { ThemeManager } from "./gui/ThemeManager.js";
+import { ViewModeController } from "./gui/ViewModeController.js";
+import { WindowStateManager } from "./gui/WindowStateManager.js";
+import { Login } from "./Login.js";
+import { MainBase } from "./MainBase.js";
+import { PruefungManagerForStudents } from './pruefung/PruefungManagerForStudents.js';
+import { CompilerFile } from '../../compiler/common/module/CompilerFile.js';
+import { Disassembler } from '../../compiler/common/disassembler/Disassembler.js';
+import { ExceptionMarker } from '../../compiler/common/interpreter/ExceptionMarker.js';
+import { IPosition } from '../../compiler/common/range/Position.js';
+import * as monaco from 'monaco-editor'
+import { LanguageManager } from '../../tools/language/LanguageManager.js';
+import { Settings } from '../settings/Settings.js';
+import { TabletConsoleLog } from '../../tools/TabletConsoleLog.js';
+import { ProgrammingLanguageManager } from '../../compiler/common/programminglanguage/ProgrammingLanguageManager.js';
+import { Repl } from '../../compiler/common/repl/Repl.js';
+import { Debugger } from '../../compiler/common/debugger/Debugger.js';
+import { AssemblyLanguageDebugger } from '../../compiler/assembly/debugger/AssemblyLanguageDebugger.js';
+
+
+export class Main implements MainBase {
+
+    repositoryOn: boolean = true;
+    workspaceList: Workspace[] = [];
+    workspacesOwnerId: number;
+
+    // monaco_editor: monaco.editor.IStandaloneCodeEditor;
+    editor: Editor;
+    currentWorkspace: Workspace;
+    projectExplorer: ProjectExplorer;
+    teacherExplorer: TeacherExplorer;
+    networkManager: NetworkManager;
+    actionManager: ActionManager;
+    mainMenu: MainMenu;
+
+    synchronizationManager: SynchronizationManager;
+    repositoryCreateManager: RepositoryCreateManager;
+    repositoryUpdateManager: RepositorySettingsManager;
+    repositoryCheckoutManager: RepositoryCheckoutManager;
+
+    pruefungManagerForStudents: PruefungManagerForStudents;
+
+    spriteManager: SpriteManager;
+
+    windowStateManager: WindowStateManager = new WindowStateManager(this);
+
+    login: Login;
+
+    debugger: Debugger;
+
+    disassembler: Disassembler;
+
+    bottomDiv: BottomDiv;
+
+    user: UserData;
+    gui_state_dirty: boolean = false;
+
+    themeManager: ThemeManager;
+
+    rightDiv: RightDiv;
+    programControlButtons: ProgramControlButtons;
+
+    debounceDiagramDrawing: any;
+
+    viewModeController: ViewModeController;
+
+    languagemanager: LanguageManager;
+
+    language: ProgrammingLanguage;
+    interpreter: Interpreter;
+
+    settings: Settings;
+    debuggerDiv: HTMLDivElement;
+
+    guiState: GuiState;
+
+    isProduction: boolean = false;
+
+    showFile(file?: CompilerFile): void {
+        if (!file || !(file instanceof GUIFile)) return;
+        this.projectExplorer.setFileActive(<GUIFile>file);
+    }
+
+    getDisassembler(): Disassembler | undefined {
+        return this.disassembler;
+    }
+
+    addWorkspace(ws: Workspace): void {
+        this.workspaceList.push(ws);
+    }
+
+    getInterpreter(): Interpreter {
+        return this.interpreter;
+    }
+
+    getCurrentProgrammingLanguage(): ProgrammingLanguage {
+        return this.language;
+    }
+
+    getCompiler(): Compiler {
+        return this.language.getCompiler(this);
+    }
+
+    getRepl(): Repl {
+        return this.language?.getRepl(this);
+    }
+
+    getMainEditor(): monaco.editor.IStandaloneCodeEditor {
+        return this.editor.editor;
+    }
+
+    getReplEditor(): monaco.editor.IStandaloneCodeEditor {
+        return this.bottomDiv.console.editor;
+    }
+
+    isEmbedded(): boolean { return false; }
+
+    getDebugger(): Debugger {
+        return this.debugger;
+    }
+
+    getRightDiv(): RightDiv {
+        return this.rightDiv;
+    }
+
+    getBottomDiv(): BottomDiv {
+        return this.bottomDiv;
+    }
+
+    getActionManager(): ActionManager {
+        return this.actionManager;
+    }
+
+    setFileActive(file: GUIFile) {
+        this.projectExplorer.setFileActive(file);
+    }
+
+    getSettings(): Settings {
+        return this.settings;
+    }
+
+    startupBeforeLogin() {
+
+        checkIfMousePresent();
+
+        this.languagemanager = new LanguageManager(this, document.body);
+
+        this.login = new Login(this);
+
+        // let singleUseToken: string | undefined = getCookieValue("singleUseToken");
+        let singleUseToken: string | undefined = findGetParameter("singleUseToken");
+        let loggedInWithVidis: boolean = findGetParameter("vidis") == "true";
+
+        if (singleUseToken) {
+            this.login.initGUI();
+            this.login.loginWithVidisOrAutoLogin(singleUseToken, loggedInWithVidis);
+        } else {
+            this.login.initGUI();
+        }
+
+    }
+
+    startupAfterLogin() {
+
+        this.actionManager = new ActionManager(null);
+        this.actionManager.init();
+
+        this.mainMenu = new MainMenu(this);
+        this.projectExplorer = new ProjectExplorer(this, jQuery('#leftpanel>.jo_projectexplorer'));
+        this.projectExplorer.initGUI();
+
+        this.bottomDiv = new BottomDiv(this, jQuery('#bottomdiv-outer>.jo_bottomdiv-inner'), true, true, true, false);
+
+        this.networkManager = new NetworkManager(this, this.bottomDiv.$updateTimer);
+
+        this.rightDiv = new RightDiv(this, document.body, true);
+        this.rightDiv.initGUI();
+
+        //@ts-ignore
+        window.UZIP = null; // needed by UPNG
+
+        this.viewModeController = new ViewModeController(jQuery("#view-mode"), this);
+
+        this.editor = new Editor(this, true, false);
+        this.editor.initGUI(jQuery('#editor'));
+
+        let that = this;
+        jQuery(window).on('resize', (event) => {
+            jQuery('#bottomdiv-outer').css('height', '150px');
+            jQuery('#editor').css('height', (window.innerHeight - 150 - 30 - 2) + "px");
+            that.editor.editor.layout();
+            jQuery('#editor').css('height', "");
+
+        });
+
+        jQuery(window).trigger('resize');
+
+        this.themeManager = new ThemeManager(<HTMLDivElement>jQuery('.joeCssFence')[0]);
+        this.themeManager.switchTheme("dark");
+
+        let breakpointManager = new BreakpointManager(this);
+        this.debuggerDiv = <HTMLDivElement>jQuery('#leftpanel>.jo_debugger')[0];
+        let inputManager = new InputManager(jQuery('#rightdiv-inner .jo_run'), this);
+        let printManager = new PrintManager(jQuery('#rightdiv-inner .jo_run'), this);
+        let fileManager = new FileManager(this);
+        let graphicsManager = new GraphicsManager(jQuery('#rightdiv-inner .jo_graphics')[0], <HTMLDivElement>jQuery('#rightdiv-inner .jo_coordinates')[0]);
+        let keyboardManager = new KeyboardManager(jQuery(window), this);
+        let programPointerManager = new ProgramPointerManager(this);
+        let exceptionMarker = new ExceptionMarker(this);
+
+        this.interpreter = new Interpreter(
+            printManager, this.actionManager,
+            graphicsManager, keyboardManager,
+            breakpointManager,
+            programPointerManager, inputManager,
+            fileManager, exceptionMarker, this);
+
+        let errorMarker = new ErrorMarker();
+
+        /**
+         * Compiler and Repl are fields of language!
+        */
+        ProgrammingLanguageManager.getInstance().registerMain(this, errorMarker);
+
+        this.disassembler = new Disassembler(this.bottomDiv.disassemblerTab.bodyDiv, this);
+
+        this.programControlButtons = new ProgramControlButtons(jQuery('#controls'), this.interpreter, this.actionManager);
+
+        new EditorOpenerProvider(this);
+
+        this.getMainEditor().updateOptions({ readOnly: true });
+
+        this.bottomDiv.initGUI();
+
+        if (this.repositoryOn) {
+            this.synchronizationManager = new SynchronizationManager(this);
+            // this.synchronizationManager.initGUI();
+            this.repositoryCreateManager = new RepositoryCreateManager(this);
+            this.repositoryCreateManager.initGUI();
+            this.repositoryUpdateManager = new RepositorySettingsManager(this);
+            this.repositoryUpdateManager.initGUI();
+            this.repositoryCheckoutManager = new RepositoryCheckoutManager(this);
+            this.repositoryCheckoutManager.initGUI();
+
+        }
+
+        this.spriteManager = new SpriteManager(this);
+
+        setTimeout(() => {
+            this.getMainEditor().layout();
+
+            let sliders = new Sliders(this);
+            sliders.initSliders();
+            this.viewModeController.registerSliders(sliders);
+
+            //            this.viewModeController = new ViewModeController(jQuery("#view-mode"), sliders, this);
+
+        }, 200);
+
+        jQuery(window).on('unload', async function () {
+
+            if (navigator.sendBeacon && that.user != null) {
+                await that.networkManager.sendUpdatesAsync(false, true);
+                that.interpreter.eventManager.fire("resetRuntime");
+
+                PushClientManager.getInstance().close();
+            }
+
+        });
+
+
+        TabletConsoleLog.registerProvider((message) => { printManager.print(message, false, 0x5050ff) });
+
+        this.switchProgrammingLanguage(this.getCurrentWorkspace()?.settings.language || "Java");
+
+
+    }
+
+    initTeacherExplorer(classdata: ClassData[]) {
+        if (this.teacherExplorer != null) {
+            this.teacherExplorer.removePanels();
+        }
+        this.teacherExplorer = new TeacherExplorer(this, classdata);
+        this.teacherExplorer.initGUI();
+    }
+
+    onCompilationFinishedWithNewExecutable(executable: Executable | undefined): void {
+
+        if(this.settings.getValue("editor.stopRunningProgramOnWhenEditingSourcecode") == "yes" ||
+            this.interpreter.isRunningOrPaused() == false){
+            // this is the only time-critical task:
+            this.interpreter.setExecutable(executable);
+        }
+
+        // this can wait => give the main thread time to do its chores:
+        setTimeout(() => {
+            let errors = this.bottomDiv?.errorManager?.showErrors(this.currentWorkspace);
+            this.projectExplorer.renderErrorCount(this.currentWorkspace, errors);
+            this.drawClassDiagrams(!this.rightDiv.isClassDiagramActive());
+        }, 20);
+
+    }
+
+
+    drawClassDiagrams(onlyUpdateIdentifiers: boolean) {
+        clearTimeout(this.debounceDiagramDrawing);
+        this.debounceDiagramDrawing = setTimeout(() => {
+            this.rightDiv?.classDiagram?.drawDiagram(this.currentWorkspace, onlyUpdateIdentifiers);
+        }, 500);
+    }
+
+    removeWorkspace(w: Workspace) {
+        this.workspaceList.splice(this.workspaceList.indexOf(w), 1);
+    }
+
+    restoreWorkspaces(workspaces: Workspaces, fixInconsistencies: boolean) {
+
+        this.workspaceList = [];
+        this.currentWorkspace = null;
+        // this.monaco.setModel(monaco.editor.createModel("Keine Datei vorhanden." , "text"));
+        this.getMainEditor().updateOptions({ readOnly: true });
+
+        for (let ws of workspaces.workspaces) {
+
+            let workspace: Workspace = Workspace.restoreFromData(ws, this);
+            this.workspaceList.push(workspace);
+            if (ws.id == this.user.currentWorkspace_id) {
+                this.currentWorkspace = workspace;
+            }
+        }
+
+        /**
+         * Find inconsistencies and fix them
+         */
+        if (fixInconsistencies) {
+            new InconsistencyFixer().start(this.workspaceList, this.networkManager, this);
+        }
+
+        this.projectExplorer.renderWorkspaces(this.workspaceList);
+
+        if (this.currentWorkspace == null && this.workspaceList.length > 0) {
+            this.currentWorkspace = this.workspaceList[0];
+        }
+
+        if (this.currentWorkspace != null) {
+            this.projectExplorer.setWorkspaceActive(this.currentWorkspace, true);
+        } else {
+            this.projectExplorer.setFileActive(null);
+        }
+
+        if (this.workspaceList.length == 0) {
+
+            Helper.showHelper("newWorkspaceHelper", this, jQuery(this.projectExplorer.workspaceTreeview.addFolderButton.parent));
+
+        }
+
+        if (!this.guiState.helperHistory?.folderButtonDone && this.projectExplorer.workspaceTreeview.size(true) > 5) {
+
+            Helper.showHelper("folderButton", this, jQuery(this.projectExplorer.workspaceTreeview.addFolderButton.parent));
+
+        } else
+            if (Math.random() < 0.9) {
+                Helper.showHelper("spritesheetHelper", this);
+            }
+
+
+
+    }
+
+    restoreWorkspaceFromData(workspaceData: WorkspaceData): Workspace {
+        return Workspace.restoreFromData(workspaceData, this);
+    }
+
+    getCurrentWorkspace(): Workspace {
+        return this.currentWorkspace;
+    }
+
+    adjustWidthToWorld(): void {
+        this.rightDiv.adjustWidthToWorld();
+    }
+
+    showJUnitDiv() {
+        this.bottomDiv.showJunitTab();
+    }
+
+    showProgramPosition(file?: CompilerFile, positionOrRange?: IPosition | IRange, setCursor: boolean = true) {
+        this.showFile(file);
+        if (!positionOrRange) return;
+        if (positionOrRange["startLineNumber"]) positionOrRange = Range.getStartPosition(<IRange>positionOrRange);
+        if (setCursor) this.getMainEditor().setPosition(<IPosition>positionOrRange)
+        this.getMainEditor().revealPositionInCenterIfOutsideViewport(<IPosition>positionOrRange);
+        this.getMainEditor().focus();
+    }
+
+    markFilesAsStartable(files: GUIFile[], active: boolean) {
+        this.projectExplorer.markFilesAsStartable(files, active);
+    }
+
+    onStartFileClicked(file: GUIFile) {
+        this.interpreter.start(file);
+    }
+
+    hideDebugger(): void {
+        this.debugger.hide();
+        this.projectExplorer.show();
+    }
+
+    showDebugger(): void {
+        this.debugger.show();
+        this.projectExplorer.hide();
+    }
+
+    switchProgrammingLanguage(languageName: string) {
+        let language = ProgrammingLanguageManager.getInstance().getLanguageByName(languageName);
+        if (language == this.language) return;
+        this.language?.getCompiler(this)?.eventManager.off(this.onCompilationFinishedWithNewExecutable);
+        this.language?.getCompiler(this)?.eventManager.off(this.onCompilationFinished);
+        this.language?.disable(this);
+        this.language = language;
+        this.language.enable(this);
+
+        this.getCompiler()?.eventManager?.on('compilationFinishedWithNewExecutable', this.onCompilationFinishedWithNewExecutable, this);
+        this.getCompiler()?.eventManager?.on('compilationFinished', this.onCompilationFinished, this);
+
+        
+        this.debugger?.remove();
+        this.debuggerDiv.innerHTML = "";
+        switch (this.language.getDebuggerType()) {
+            case "java":
+                this.debugger = new JavaDebugger(this.debuggerDiv, !this.isEmbedded(), this);
+                break;
+            case "assembly":
+                this.debugger = new AssemblyLanguageDebugger(this.debuggerDiv, !this.isEmbedded(), this);
+                break;
+        }
+
+        this.debugger.hide();
+
+    }
+
+    onCompilationFinished() {
+        this.getInterpreter()?.onFileSelected();
+    }
+
+    async setHorizontalSliderPosition(fraction: number): Promise<void> {
+        let sliders = await this.viewModeController.getSliders();
+        sliders.setSliderRightPosition(fraction);
+    }
+}
+

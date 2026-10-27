@@ -1,0 +1,227 @@
+diff --git a/src/client/embedded/EmbeddedInterface.ts b/src/client/embedded/EmbeddedInterface.ts
+index d7eb5ad..88c90e5 100644
+--- a/src/client/embedded/EmbeddedInterface.ts
++++ b/src/client/embedded/EmbeddedInterface.ts
+@@ -1,3 +1,6 @@
++import type { editor } from 'monaco-editor';
++import { SchedulerState } from '../../compiler/common/interpreter/SchedulerState';
++import { subscribe, type Snapshot } from '../../visualizer/runtime';
+ import type { IThrowable } from "../../compiler/common/interpreter/ThrowableType";
+ import type { RuntimeExceptionClass } from "../../compiler/java/runtime/system/javalang/RuntimeException";
+ import { GUIFile } from "../workspace/File";
+@@ -22,6 +25,9 @@ interface IDEStatusAccess {
+ }
+ 
+ interface SingleIDEAccess {
++    subscribeDebugger(listener: (snapshot: Snapshot) => void): () => void;
++    setHistoryLocation(location?: { file: string; line: number }): void;
++    layoutEditor(): void;
+     getFiles(): IDEFileAccess[];
+     registerOnRunExitListener(listener: OnRunExitListener): void;
+ }
+@@ -49,11 +55,61 @@ export class IDEFileAccessImpl implements IDEFileAccess {
+ }
+ 
+ export class SingleIDEAccessImpl implements SingleIDEAccess {
++    layoutEditor(): void { this.ide.getMainEditor().layout(); }
++
++    private historyMarker?: { model: editor.ITextModel; ids: string[]; file: string; line: number; version: number };
++
++    /** UI-only decoration, independently owned from the interpreter's program pointer. */
++    setHistoryLocation(location?: { file: string; line: number }): void {
++        if (!this.ide.config.enableDebuggerAccess) throw new Error('Debugger access is disabled');
++        const old = this.historyMarker;
++        if (location && old && !old.model.isDisposed() && old.file === location.file && old.line === location.line && old.version === old.model.getVersionId()) return;
++        if (old && !old.model.isDisposed()) old.model.deltaDecorations(old.ids, []);
++        this.historyMarker = undefined;
++        if (!location) {
++            if (!old) return;
++            // Monaco removes editor-owned decorations when switching models. Restore
++            // the real pointer through its existing manager, without firing a step event.
++            const interpreter = this.ide.getInterpreter();
++            const manager = interpreter.programPointerManager;
++            const position = interpreter.scheduler.getNextStepPosition();
++            if (old && interpreter.scheduler.state === SchedulerState.paused && position?.range && manager?.keyToDecorationsMap.has('ProgramPointer')) {
++                manager.show(position, {
++                    key: 'ProgramPointer', isWholeLine: true, className: 'jo_revealProgramPointer',
++                    rulerColor: '#6fd61b', minimapColor: '#6fd61b',
++                    beforeContentClassName: interpreter.showTriangleAtProgramPointer ? 'jo_revealProgramPointerBefore' : undefined
++                });
++            }
++            return;
++        }
++        if (!Number.isInteger(location.line) || location.line < 1) return;
++        const file = this.ide.getCurrentWorkspace().getFiles().find(file => file.name === location.file);
++        const model = file?.getMonacoModel();
++        if (!file || !model || model.isDisposed() || location.line > model.getLineCount()) return;
++        const ids = model.deltaDecorations([], [{
++            range: { startLineNumber: location.line, startColumn: 1, endLineNumber: location.line, endColumn: model.getLineMaxColumn(location.line) },
++            options: {
++                isWholeLine: true, className: 'jo_history_line', linesDecorationsClassName: 'jo_history_gutter', zIndex: 20,
++                hoverMessage: { value: 'Aufgezeichneter Haltepunkt · Verlauf (nächste Anweisung)' },
++                overviewRuler: { color: '#8ed2ff', position: 2 }
++            }
++        }]);
++        this.historyMarker = { model, ids, file: location.file, line: location.line, version: model.getVersionId() };
++        const sourceEditor = this.ide.getMainEditor();
++        if (sourceEditor.getModel() !== model) this.ide.setFileActive(file);
++        sourceEditor.revealLineInCenterIfOutsideViewport(location.line);
++    }
++
+ 
+     constructor(private ide: MainEmbedded, private enableFileAccess: boolean, private enableRunExitStatusAccess: boolean){
+ 
+     }
+ 
++    subscribeDebugger(listener: (snapshot: Snapshot) => void): () => void {
++        if (!this.ide.config.enableDebuggerAccess) throw new Error('Debugger access is disabled');
++        return subscribe(this.ide.getInterpreter(), listener);
++    }
++
+     getFiles(): IDEFileAccess[] {
+         if(!this.enableFileAccess){
+             throw new Error("File access is not enabled for this IDE");
+diff --git a/src/client/embedded/MainEmbedded.ts b/src/client/embedded/MainEmbedded.ts
+index e0b70ac..3111e98 100644
+--- a/src/client/embedded/MainEmbedded.ts
++++ b/src/client/embedded/MainEmbedded.ts
+@@ -69,6 +69,7 @@ type JavaOnlineConfig = {
+     libraries?: string[],
+     jsonFilename?: string,
+     spritesheetURL?: string,
++    enableDebuggerAccess?: boolean,
+     enableFileAccess?: boolean,
+     enableRunExitStatusAccess?: boolean,
+     settings?: SettingValues,
+@@ -152,8 +153,10 @@ export class MainEmbedded implements MainBase {
+ 
+         await this.loadUserSpritesheet();
+         if (!this.config.hideStartPanel) {
+-            this.indexedDB = new EmbeddedIndexedDB();
+-            await this.indexedDB.open();
++            if (this.config.cacheUserEdits) {
++                this.indexedDB = new EmbeddedIndexedDB();
++                await this.indexedDB.open();
++            }
+ 
+             if (this.config.id != null) {
+                 await this.readScriptsFromIndexedDB();
+@@ -175,7 +178,7 @@ export class MainEmbedded implements MainBase {
+ 
+             }
+ 
+-            if (this.config.enableFileAccess || this.config.enableRunExitStatusAccess) {
++            if (this.config.enableFileAccess || this.config.enableRunExitStatusAccess || this.config.enableDebuggerAccess) {
+                 //@ts-ignore
+                 window.online_ide_access = new OnlineIDEAccessImpl();
+                 OnlineIDEAccessImpl.registerIDE(this);
+@@ -189,7 +192,7 @@ export class MainEmbedded implements MainBase {
+     }
+ 
+     readClassDiagram() {
+-        if (!this.config.withClassDiagram) return;
++        if (!this.config.withClassDiagram || !this.config.cacheUserEdits) return;
+ 
+         /*
+          * In MainEmbedded.initGUI the classDiagram-Object is instantiated asynchronously to wait for
+@@ -421,6 +424,7 @@ export class MainEmbedded implements MainBase {
+     }
+ 
+     saveScripts() {
++        if (!this.config.cacheUserEdits || !this.indexedDB) return;
+ 
+         let files = this.currentWorkspace.getFiles();
+ 
+@@ -452,6 +456,7 @@ export class MainEmbedded implements MainBase {
+     }
+ 
+     deleteScriptsInDB() {
++        if (!this.indexedDB) return;
+         this.indexedDB.getScript(this.config.id, (scriptListJSon) => {
+             if (scriptListJSon == null) {
+                 return;
+diff --git a/src/compiler/common/interpreter/Interpreter.ts b/src/compiler/common/interpreter/Interpreter.ts
+index 2b9bd4b..965de8e 100644
+--- a/src/compiler/common/interpreter/Interpreter.ts
++++ b/src/compiler/common/interpreter/Interpreter.ts
+@@ -32,9 +32,21 @@ import type { IThrowable } from "./ThrowableType.ts";
+ 
+ 
+ type InterpreterEvents = "stop" | "done" | "resetRuntime" | "stateChanged" |
+-    "showProgramPointer" | "hideProgramPointer" | "afterExcecutableInitialized" | "start";
++    "showProgramPointer" | "hideProgramPointer" | "afterExcecutableInitialized" | "start" | "executionRequested";
+ 
+ export class Interpreter {
++    /** Optional read-only observers. Empty unless a runtime inspector subscribes. */
++    beforeStepListeners = new Set<(thread: Thread) => void>();
++    observeBeforeStep(thread: Thread) {
++        for (const observe of this.beforeStepListeners) {
++            try { observe(thread); }
++            catch (error) {
++                this.beforeStepListeners.delete(observe);
++                console.error('Runtime recording observer disabled after an error', error);
++            }
++        }
++    }
++
+ 
+     #loadController: LoadController;
+     scheduler: Scheduler;
+@@ -182,6 +194,7 @@ export class Interpreter {
+     }
+ 
+     executeOneStep(stepInto: boolean) {
++        if (this.scheduler.state !== SchedulerState.not_initialized) this.eventManager.fire("executionRequested");
+ 
+         if (this.scheduler.state != SchedulerState.paused) {
+             if (this.scheduler.state == SchedulerState.not_initialized) {
+@@ -356,6 +369,7 @@ export class Interpreter {
+     }
+ 
+     start(fileToStart?: GUIFile, resetRuntime: boolean = true, showProgramPointerBeforeFirstStep: boolean = false) {
++        this.eventManager.fire("executionRequested");
+         // this.main.getBottomDiv()?.console?.clearErrors();
+ 
+         this.main?.getBottomDiv()?.errorManager?.hideAllErrorDecorations();
+@@ -407,6 +421,7 @@ export class Interpreter {
+     }
+ 
+     #stepOut() {
++        this.eventManager.fire("executionRequested");
+         this.scheduler.stepOut(() => {
+             this.pause();
+         })
+diff --git a/src/compiler/common/interpreter/Thread.ts b/src/compiler/common/interpreter/Thread.ts
+index ff8c195..cc1e068 100644
+--- a/src/compiler/common/interpreter/Thread.ts
++++ b/src/compiler/common/interpreter/Thread.ts
+@@ -127,6 +127,14 @@ export class Thread {
+                         /**
+                          * Behold, here the steps run!
+                          */
++                        if (this.scheduler.interpreter.beforeStepListeners.size) {
++                            // The fast loop caches stepIndex locally. Expose the exact
++                            // boundary to observers, then restore the original loop state.
++                            const savedIndex = currentProgramState.stepIndex;
++                            currentProgramState.stepIndex = stepIndex;
++                            this.scheduler.interpreter.observeBeforeStep(this);
++                            currentProgramState.stepIndex = savedIndex;
++                        }
+                         stepIndex = step.run!(this, stack, stackBase);
+                         if (currentProgramState != this.currentProgramState) {
+                             currentProgramState.stepIndex = stepIndex;
+@@ -160,6 +168,14 @@ export class Thread {
+ 
+                         // console.log(step.codeAsString);
+ 
++                        if (this.scheduler.interpreter.beforeStepListeners.size) {
++                            // The fast loop caches stepIndex locally. Expose the exact
++                            // boundary to observers, then restore the original loop state.
++                            const savedIndex = currentProgramState.stepIndex;
++                            currentProgramState.stepIndex = stepIndex;
++                            this.scheduler.interpreter.observeBeforeStep(this);
++                            currentProgramState.stepIndex = savedIndex;
++                        }
+                         stepIndex = step.run!(this, stack, stackBase);
+ 
+                         if (currentProgramState != this.currentProgramState) {

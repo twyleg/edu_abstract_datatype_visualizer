@@ -1,0 +1,15 @@
+<!doctype html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>edu_abstract_datatype_visualizer</title><script type="module" src="/src/visualizer/main.ts"></script></head><body>
+<main id="workspace"><section id="ide-pane" class="ide" aria-label="Online-IDE"><div class="java-online" data-java-online="{'id':'edu_abstract_datatype_visualizer','speed':'max','withFileList':true,'withConsole':true,'withErrorList':true,'enableDebuggerAccess':true,'cacheUserEdits':false}">
+<script type="text/plain" title="Programm.java" data-type="java">
+DynArray<String> namen = new DynArray<String>();
+namen.append("Anna");
+namen.append("Clara");
+namen.insertAt(1, "Ben");
+DynArray<String> alias = namen;
+DynArray<String> leer = new DynArray<String>();
+namen.delete(0);
+namen.setItem(0, "Benedikt");
+println(namen.getLength());
+</script><script type="text/plain" title="DynArray.java" data-type="java"></script></div></section>
+<div id="workspace-divider" role="separator" aria-orientation="vertical" aria-label="Breite der Bereiche ändern" aria-controls="ide-pane visualization-pane" aria-valuemin="20" aria-valuemax="80" aria-valuenow="52" tabindex="0" title="Bereiche durch Ziehen oder Pfeiltasten vergrößern"></div>
+<aside id="visualization-pane" aria-label="Container Visualizer"><div id="view"></div></aside></main></body></html>

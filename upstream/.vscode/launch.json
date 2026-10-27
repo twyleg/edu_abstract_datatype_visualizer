@@ -1,0 +1,70 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug IDE Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug Embedded Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:3000/embedded_java.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug registerUser.html",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:3000/registerUser.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug IDE Chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Embedded Chrome",
+            "url": "http://localhost:3000/embedded_java.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Treeviewtest Chrome",
+            "url": "http://localhost:3000/treeviewTest.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Generate Spritesheet",
+            "program": "${workspaceFolder}/src/development/spritesheetgenerator.js",
+            "request": "launch",
+            "type": "node"
+        },
+        {
+            "name": "Debug Embedded Edge Ass",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:3000/embedded_assembly.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Embedded Chrome Ass",
+            "url": "http://localhost:3000/embedded_assembly.html",
+            "webRoot": "${workspaceFolder}"
+        },
+    ]
+}

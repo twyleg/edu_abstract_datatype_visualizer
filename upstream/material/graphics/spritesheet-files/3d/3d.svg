@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="793.70081"
+   height="1122.5197"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="3d.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="true"
+     units="px"
+     inkscape:zoom="4.9533951"
+     inkscape:cx="25.840862"
+     inkscape:cy="66.116269"
+     inkscape:window-width="2966"
+     inkscape:window-height="1828"
+     inkscape:window-x="396"
+     inkscape:window-y="99"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid824"
+       empspacing="16"
+       originx="0"
+       originy="0"
+       spacingy="4.2333333"
+       spacingx="4.2333333"
+       units="px"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:16.3121px;line-height:1.13;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0.611702px;fill:#ff0000;fill-opacity:1;stroke-width:0.687917;stroke-linecap:square"
+       x="8.203825"
+       y="16.558983"
+       id="text1"
+       inkscape:export-filename="axis_x.png"
+       inkscape:export-xdpi="192"
+       inkscape:export-ydpi="192"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#ff0000;stroke-width:0.687917;fill-opacity:1"
+         x="8.203825"
+         y="16.558983">x</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:16.3121px;line-height:1.13;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0.611702px;fill:#00ff00;fill-opacity:1;stroke-width:0.687917;stroke-linecap:square"
+       x="8.203825"
+       y="29.258995"
+       id="text2"
+       inkscape:export-filename="axis_y.png"
+       inkscape:export-xdpi="192"
+       inkscape:export-ydpi="192"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="fill:#00ff00;stroke-width:0.687917;fill-opacity:1"
+         x="8.203825"
+         y="29.258995">y</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:16.3121px;line-height:1.13;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0.611702px;fill:#2020ff;fill-opacity:1;stroke-width:0.687917;stroke-linecap:square"
+       x="8.203825"
+       y="46.192329"
+       id="text3"
+       inkscape:export-filename="axis_z.png"
+       inkscape:export-xdpi="192"
+       inkscape:export-ydpi="192"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="fill:#2020ff;fill-opacity:1;stroke-width:0.687917"
+         x="8.203825"
+         y="46.192329">z</tspan></text>
+  </g>
+</svg>

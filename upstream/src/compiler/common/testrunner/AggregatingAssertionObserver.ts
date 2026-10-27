@@ -1,0 +1,119 @@
+import { IAssertionObserver } from "../../java/runtime/unittests/IAssertionObserver";
+import { Step } from "../interpreter/Step";
+import { Thread } from "../interpreter/Thread";
+import { JUnitTestrunnerLanguage } from "./JUnitTestrunnerLanguage";
+import { DOM } from "../../../tools/DOM";
+import { IMain } from "../IMain";
+
+export type AssertionResultState = "passed" | "failed" | "error";
+
+export type AssertionResult = {
+    state: AssertionResultState,
+    messageHtmlElement?: HTMLElement        // if state != "passed"
+}
+
+export class AggregatingAssertionObserver implements IAssertionObserver {
+
+    constructor(private main: IMain) {
+
+    }
+
+    notifyOnAssemblyAssertion(thread: Thread, step: Step, expectedMemoryState: string, actualMemoryState: string, message: string): void {
+        if (expectedMemoryState !== actualMemoryState) {
+            this.addFailedResult(thread, step, "notifyOnAssemblyAssertion", expectedMemoryState, actualMemoryState, message);
+        }
+    }
+
+    public assertionResults: AssertionResult[] = [];
+
+    notifyOnAssertTrue(thread: Thread, step: Step, condition: boolean, message: string): void {
+        if (condition !== true) {
+            this.addFailedResult(thread, step, "notifyOnAssertTrue", "true", "false", message);
+        }
+    }
+
+    notifyOnAssertFalse(thread: Thread, step: Step, condition: boolean, message: string): void {
+        if (condition !== false) {
+            this.addFailedResult(thread, step, "notifyOnAssertFalse", "false", "true", message);
+        }
+    }
+
+    notifyOnAssertEqualsBoolean(thread: Thread, step: Step, expected: boolean, actual: boolean, message: string): void {
+        if (actual !== expected) {
+            this.addFailedResult(thread, step, "notifyOnAssertEquals", "" + expected, "" + actual, message);
+        }
+    }
+
+    notifyOnAssertEqualsNumber(thread: Thread, step: Step, expected: number, actual: number, message: string): void {
+        if (Math.abs(actual - expected) > 1e-14) {
+            this.addFailedResult(thread, step, "notifyOnAssertEquals", "" + expected, "" + actual, message);
+        }
+    }
+
+    notifyOnAssertEqualsString(thread: Thread, step: Step, expected: string, actual: string, message: string): void {
+        if (expected !== actual) {
+            this.addFailedResult(thread, step, "notifyOnAssertEquals", expected == null ? "null" : expected, actual == null ? "null" : actual, message);
+        }
+    }
+
+    notifyOnAssertEqualsObject(thread: Thread, step: Step, expected: string, actual: string, message: string): void {
+        if (expected !== actual) {
+            this.addFailedResult(thread, step, "notifyOnAssertEquals", expected, actual, message);
+        }
+    }
+
+    notifyOnAssertThrows(thread: Thread, step: Step, message: string, expectedExceptionIdentifier: string): void {
+        this.addFailedResult(thread, step, "notifyOnAssertThrows", "Executable was expected to throw an exception of type " + expectedExceptionIdentifier + ".", "No exception was thrown.", message);
+    }
+
+    notifyOnFail(thread: Thread, step: Step, message: string): void {
+        this.addFailedResult(thread, step, "notifyOnFail", "---", "---", message);
+    }
+
+    addFailedResult(thread: Thread, step: Step, notifyMethodIdentifier: string, expected: string, actual: string, message: string) {
+
+        let positionHtml: string | null = null;
+        let range = null;
+
+        if (thread.hasCPU()) {
+            range = thread.__cpu.getRangeOfCurrentInstruction();
+            if (range) {
+                positionHtml = ` <span class="jo_junitLink">(${JUnitTestrunnerLanguage.line(range.startLineNumber, range.startColumn)})</span>`;
+            }
+        } else {
+            range = step.getValidRangeOrUndefined();
+            if (range) {
+                positionHtml = ` <span class="jo_junitLink">(${JUnitTestrunnerLanguage.line(range.startLineNumber, range.startColumn)})</span>`;
+            }
+        }
+
+        if (!positionHtml) {
+            positionHtml = ` <span>(no position available)</span>`;
+        }
+
+        let messageHtml =
+            `<div class="jo_junitFailBlock">` +
+            `<div><span class="jo_junitError">${notifyMethodIdentifier} ${JUnitTestrunnerLanguage.failed()}${positionHtml}: </span> </div>\n` +
+            `<div>Details: <span class="jo_junitDetails">${message}</span></div>` +
+            `<div>${JUnitTestrunnerLanguage.expectedValue()}<span class="jo_junitExpected">${expected}</span></div>\n` +
+            `<div>${JUnitTestrunnerLanguage.actualValue()}<span class="jo_junitActual">${actual}</span></div>\n` +
+            `</div>`;
+
+        let messageHtmlElement = DOM.makeDiv(undefined);
+        messageHtmlElement.innerHTML = messageHtml;
+
+        if (range) {
+            let linkSpan = <HTMLSpanElement>messageHtmlElement.getElementsByClassName("jo_junitLink")[0];
+            linkSpan.addEventListener("click", () => {
+                this.main.showProgramPosition(step.module.file, range);
+            })
+        }
+
+        this.assertionResults.push({
+            state: "failed",
+            messageHtmlElement: messageHtmlElement
+        })
+
+        // TODO: stacktrace!
+    }
+}

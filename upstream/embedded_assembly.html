@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Embedded-Test</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type="module" src="/src/client/embedded/EmbeddedStarter.ts"></script>
+</head>
+
+<body>
+    <h1>Erstes Beispiel</h1>
+
+    <div class="java-online" style="width: calc(100% - 10px); height: 500px; margin-left: 5px" data-java-online="{
+        'id': 'abcd-assembly',
+        'speed': 'max',
+        'withFileList': true,
+        'hideEditor': false,
+        'hideStartPanel': false,
+        'libraries': [],
+        'programmingLanguage': 'ByAssembly',
+        'settings': {
+            'compiler.shadowedSymbolErrorLevel': 'error'
+        },
+        'withClassDiagram': true
+
+    }">
+        <script type="text/plain" title="Test1.asm" data-type="java">
+      loadi 0
+      store ergebnis
+      loadi 100
+      store adresse
+loop: load (adresse)
+      add ergebnis
+      store ergebnis
+      load adresse
+      addi 1
+      store adresse
+      cmpi 120
+      jlt loop
+      hold
+      .origin 100
+      word 17, 28, 19, 15, 1, 0, 132, 128, 130, 18
+      word 51, 16, 27, 38, 24, 10, 8, 5, 87, 32
+ergebnis: word 0
+adresse:  word 0        
+</script>
+    </div>
+
+
+
+    <!-- <h1>Zweites Beispiel</h1>
+
+    <div class="java-online" style="width: calc(80% - 10px); height: 300px; margin-left: 5px" data-java-online="{
+        'withFileList': true,
+        'withPCode': false,
+        'withConsole': false,
+        'withErrorList': false,
+        'id': 'abcd2',
+        'spritesheetURL': 'assets/test_spritesheets/JavaKara-Spritesheet.zip'
+    }">
+        <script type="text/plain" title="Test1.java" data-type="java" src="assets/test_programs/test1.java">
+
+
+        </script>
+        <script type="text/plain" title="Test2.java" data-type="java" src="assets/test_programs/test2.java">
+        </script>
+
+    </div> -->
+
+    <!-- <h1>Drittes Beispiel</h1>
+
+    <div class="java-online joeCssFence" style="width: 100%; height: 70vh; margin-left: 5px" data-java-online="{
+        'withBottomPanel': true,
+        'id': 'abcd3',
+        'libraries': ['nrw']
+    }">
+        <script type="text/plain" title="Test2.java" data-type="java">
+World w = new World();
+new Circle(200, 200, 100);
+        </script>
+        <script type="text/plain" title="Test3.java" data-type="java">
+            println("Hier!");
+        </script>
+    </div> -->
+
+
+</body>
+
+</html>

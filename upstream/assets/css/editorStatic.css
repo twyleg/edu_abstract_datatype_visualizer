@@ -1,0 +1,88 @@
+/*
+ * This file is not used by embedded-IDE
+ */
+
+html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body.joeCssFence {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--fontColorNormal);
+    background-color: var(--backgroundDark);
+    font-family: 'Roboto', sans-serif;
+    /* font-weight: 500; */
+    overflow: hidden;
+    font-size: 10pt;
+}
+
+.joeCssFence {
+    /* beta-version */
+    #login, #login-center {
+        background-color: var(--backgroundBeta)
+    }
+
+    #rightdiv {
+        position: relative;
+    }
+
+    #beta-version {
+        position: absolute;
+        font-size: 150%;
+        left: 10px;
+        top: 10px;
+    }
+    /* End beta */
+
+    a {
+        color:rgb(93, 136, 200);
+    }
+
+    .jo_debugger {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .versionDiv {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /**
+        BugFix for Monaco editor. Without this code editor pane of References-Widget is 5px wide and 5px high
+    **/
+    .inline {
+        height:100% !important;
+        width:100% !important;
+    }
+
+    #pruefunglaeuft {
+        display: none;
+        background-color: #2f8024;
+        padding: 3px;
+        text-align: center;
+    }
+
+    #pruefunglaeuft>span {
+        display: inline-block;
+        position: relative;
+        top: 1px;
+        margin-right: 5px;
+    }
+
+    @media screen and (max-width: 1000px) {
+        .isidigitalimg, #jo_login_new {
+            display: none;
+        }
+    }
+}

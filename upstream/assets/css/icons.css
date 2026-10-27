@@ -1,0 +1,927 @@
+.joeCssFence {
+   .img_flag-german {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/flag-german.svg');
+   }
+
+   .img_flag-english {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/flag-english.svg');
+   }
+
+   .img_add-class-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-class-dark.svg');
+   }
+
+   .img_add-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-dark.svg');
+   }
+
+   .img_copy-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/copy-dark.svg');
+   }
+
+   .img_add-file-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-file-dark.svg');
+   }
+
+   .img_add-folder-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-folder-dark.svg');
+   }
+
+   .img_add-test-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-test-dark.svg');
+   }
+
+   .img_add-user-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-user-dark.svg');
+   }
+
+   .img_add-workspace-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/add-workspace-dark.svg');
+   }
+
+   .img_arrow-down-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-down-dark.svg');
+   }
+
+   .img_arrow-down {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-down.svg');
+   }
+
+   .img_arrow-left-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-left-dark.svg');
+   }
+
+   .img_arrow-left-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-left-light.svg');
+   }
+
+   .img_arrow-left {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-left.svg');
+   }
+
+   .img_arrow-leftright-blue {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-leftright-blue.svg');
+   }
+
+   .img_arrow-right-blue {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-right-blue.svg');
+   }
+
+   .img_arrow-right-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-right-dark.svg');
+   }
+
+   .img_arrow-right {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-right.svg');
+   }
+
+   .img_arrow-up-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-up-dark.svg');
+   }
+
+   .img_arrow-up {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/arrow-up.svg');
+   }
+
+   .img_attributedeclaration-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/attributedeclaration-dark.svg');
+   }
+
+   .img_chevron-down-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-down-dark.svg');
+   }
+
+   .img_chevron-down {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-down.svg');
+   }
+
+   .img_chevron-left-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-left-dark.svg');
+   }
+
+   .img_chevron-left {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-left.svg');
+   }
+
+   .img_chevron-next-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-next-dark.svg');
+   }
+
+   .img_chevron-next-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-next-light.svg');
+   }
+
+   .img_chevron-previous-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-previous-dark.svg');
+   }
+
+   .img_chevron-previous-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-previous-light.svg');
+   }
+
+   .img_chevron-right-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-right-dark.svg');
+   }
+
+   .img_chevron-right {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-right.svg');
+   }
+
+   .img_chevron-up-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-up-dark.svg');
+   }
+
+   .img_chevron-up {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/chevron-up.svg');
+   }
+
+   .img_class-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/class-dark.svg');
+   }
+
+   .img_classdeclaration-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/classdeclaration-dark.svg');
+   }
+
+   .img_clear-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/clear-dark.svg');
+   }
+
+   .img_collapse-all-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/collapse-all-dark.svg');
+   }
+
+   .img_constructordeclaration-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/constructordeclaration-dark.svg');
+   }
+
+   .img_delete-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/delete-dark.svg');
+   }
+
+   .img_delete {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/delete.svg');
+   }
+
+   .img_disconnect-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/disconnect-dark.svg');
+   }
+
+   .img_document-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/document-dark.svg');
+   }
+
+   .img_edit-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/edit-dark.svg');
+   }
+
+   .img_ellipsis-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/ellipsis-dark.svg');
+   }
+
+   .img_enumdeclaration-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/enumdeclaration-dark.svg');
+   }
+
+   .img_errorfree {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/errorfree.svg');
+   }
+
+   .img_field-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/field-dark.svg');
+   }
+
+   .img_field-light-startable {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/field-light-startable.svg');
+   }
+
+   .img_field-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/field-light.svg');
+   }
+
+   .img_file-dark-csv {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-csv.svg');
+   }
+
+   .img_file-dark-empty {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-empty.svg');
+   }
+
+   .img_file-dark-java {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-java.svg');
+   }
+
+   .img_file-dark-assembly {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-assembly.svg');
+   }
+
+   .img_file-dark-json {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-json.svg');
+   }
+
+   .img_file-dark-text {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-text.svg');
+   }
+
+   .img_file-dark-xml {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark-xml.svg');
+   }
+
+   .img_file-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-dark.svg');
+   }
+
+   .img_file-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file-light.svg');
+   }
+
+   .img_file {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/file.svg');
+   }
+
+   .img_gear-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/gear-dark.svg');
+   }
+
+   .img_grid {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/grid.svg');
+   }
+
+   .img_home-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/home-dark.svg');
+   }
+
+   .img_homework-corrected-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/homework-corrected.svg');
+   }
+
+   .img_homework-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/homework.svg');
+   }
+
+   .img_info-sign {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/info-sign.svg');
+   }
+
+   .img_instanceinitialization-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/instanceinitialization-dark.svg');
+   }
+
+   .img_interfacedeclaration-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/interfacedeclaration-dark.svg');
+   }
+
+   .img_junit-failed-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/junit-failed-dark.svg');
+   }
+
+   .img_junit-passed-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/junit-passed-dark.svg');
+   }
+
+   .img_junit-todo-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/junit-todo-dark.svg');
+   }
+
+   .img_knob {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/knob.svg');
+   }
+
+   .img_lightbulb-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/lightbulb-dark.svg');
+   }
+
+   .img_lightbulb-uni-yellow {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/lightbulb-uni-yellow.svg');
+   }
+
+   .img_lightbulb_yellow {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/lightbulb_yellow.svg');
+   }
+
+   .img_menu-three-bars {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/menu-three-bars.svg');
+   }
+
+   .img_methoddeclaration-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/methoddeclaration-dark.svg');
+   }
+
+   .img_monitor-mode {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/monitor-mode.svg');
+   }
+
+   .img_my-arrow-left-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/my-arrow-left-dark.svg');
+   }
+
+   .img_my-arrow-right-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/my-arrow-right-dark.svg');
+   }
+
+   .img_open-change-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/open-change-dark.svg');
+   }
+
+   .img_open-file {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/open-file.svg');
+   }
+
+   .img_pause-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/pause-dark.svg');
+   }
+
+   .img_presentation-mode {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/presentation-mode.svg');
+   }
+
+   .img_program-pointer-purple {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/program-pointer-purple.svg');
+   }
+
+   .img_program-pointer-yellow {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/program-pointer-yellow.svg');
+   }
+
+   .img_program-pointer {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/program-pointer.svg');
+   }
+
+   .img_restart-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/restart-dark.svg');
+   }
+
+   .img_result-arrow {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/result-arrow.svg');
+   }
+
+   .img_save-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/save-dark.svg');
+   }
+
+   .img_start-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/start-dark.svg');
+   }
+
+   .img_startable-file {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/startable-file.svg');
+   }
+
+   .img_staticinitialization-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/staticinitialization-dark.svg');
+   }
+
+   .img_step-into-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/step-into-dark.svg');
+   }
+
+   .img_step-out-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/step-out-dark.svg');
+   }
+
+   .img_step-over-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/step-over-dark.svg');
+   }
+
+   .img_goto-cursor-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/goto-cursor-dark.svg');
+   }
+
+   .img_stop-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/stop-dark.svg');
+   }
+
+   .img_test-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/test-dark.svg');
+   }
+
+   .img_test-start {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/test-start.svg');
+   }
+
+   .img_test-state-correcting {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/test-state-correcting.svg');
+   }
+
+   .img_test-state-opening {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/test-state-opening.svg');
+   }
+
+   .img_test-state-preparing {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/test-state-preparing.svg');
+   }
+
+   .img_test-state-running {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/test-state-running.svg');
+   }
+
+   .img_thread-blocked {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-blocked.svg');
+   }
+
+   .img_thread-new {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-new.svg');
+   }
+
+   .img_thread-runnable {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-runnable.svg');
+   }
+
+   .img_thread-stoppedAtBreakpoint {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-stoppedAtBreakpoint.svg');
+   }
+
+   .img_thread-terminated {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-terminated.svg');
+   }
+
+   .img_thread-terminatedWithException {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-terminatedWithException.svg');
+   }
+
+   .img_thread-timedWaiting {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-timedWaiting.svg');
+   }
+
+   .img_thread-waiting {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/thread-waiting.svg');
+   }
+
+   .img_tree-collapsed-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-collapsed-dark.svg');
+   }
+
+   .img_tree-collapsed-hc {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-collapsed-hc.svg');
+   }
+
+   .img_tree-collapsed-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-collapsed-light.svg');
+   }
+
+   .img_tree-expanded-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-expanded-dark.svg');
+   }
+
+   .img_tree-expanded-hc {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-expanded-hc.svg');
+   }
+
+   .img_tree-expanded-light {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-expanded-light.svg');
+   }
+
+   .img_tree-line-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/tree-line-dark.svg');
+   }
+
+   .img_undo {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/undo.svg');
+   }
+
+   .img_user-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/user-dark.svg');
+   }
+
+   .img_user {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/user.svg');
+   }
+
+   .img_whole-window-back-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/whole-window-back.svg');
+   }
+
+   .img_whole-window-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/whole-window.svg');
+   }
+
+   .img_workspace-repository-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-repository-dark.svg');
+   }
+
+   .img_workspace-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-dark.svg');
+   }
+
+   .img_workspace-java-repository-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-java-repository-dark.svg');
+   }
+
+   .img_workspace-java-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-java-dark.svg');
+   }
+
+   .img_workspace-assembly-repository-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-assembly-repository-dark.svg');
+   }
+
+   .img_workspace-assembly-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-assembly-dark.svg');
+   }
+
+   .img_workspace-python-repository-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-python-repository-dark.svg');
+   }
+
+   .img_workspace-python-dark {
+      width: 16px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-image: url('../icons/workspace-python-dark.svg');
+   }
+
+
+}

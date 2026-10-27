@@ -1,0 +1,13 @@
+Roboto font files: Copyright 2011 Google Inc. All Rights Reserved.
+Roboto Mono font files: Copyright 2015 The Roboto Mono Project Authors
+(https://github.com/googlefonts/robotomono).
+The bundled versions identify Apache License 2.0 in their font metadata;
+see Roboto-LICENSE.txt. Fonts are served locally, without Google Fonts requests.
+
+Celestial textures: Solar System Scope, https://www.solarsystemscope.com/textures/
+CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+Original notice: upstream/assets/graphics/textures/celestial/License.txt.
+
+IDE code and bundled assets are from Martin Pabst's Online-IDE:
+https://github.com/martin-pabst/Online-IDE-new-compiler
+See UPSTREAM.md and upstream/LICENSE; preserve individual asset notices.

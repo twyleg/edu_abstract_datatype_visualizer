@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Online-IDE</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1.0, minimal-ui'>
+
+    <!-- VIDIS -->
+    <script src="https://repo.vidis.schule/repository/vidis-cdn/latest/vidisLogin.umd.js"></script>
+
+    <script type="module" src="/src/client/main/IDEStarter.ts"></script>
+</head>
+
+<body class="joeCssFence">
+    <!-- Helper-Box mit Erklärungen -->
+    <div style="display: none;" class="jo_helperBox jo_arrow_box jo_arrow_box_right">
+        <div class="img_info-sign" style="width: 64px; height: 64px; float: left; margin-right: 15px"></div>
+        <span></span>
+        <div id="arrowBoxButtonOuter">
+            <div class="jo_button jo_active">OK</div>
+        </div>
+    </div>
+
+    <!-- Bitte-Warten-Text nach dem Logout (bis die Einstellungen gespeichert sind)-->
+    <div id="bitteWarten">
+        <div class="jo_login_div">
+            <div id="bitteWartenText">Please wait/bitte warten...</div>
+        </div>
+        <div id="login-spinner1" class="jo_login_div">
+            <img src="assets/graphics/ball-triangle.svg">
+        </div>
+    </div>
+
+    <!-- Login-Seite -->
+    <div id="login">
+        <!-- <div id="jo_login_new">
+            <div>Neu:</div>
+            <ul>
+                <li><a target="_blank" href="https://www.learnj.de/doku.php?id=api:documentation:kara:start">Java Kara</a></li>
+                <li><a target="_blank" href="https://www.learnj.de/doku.php?id=api:documentation:hamster:start">Java Hamster</a></li>
+                <li><a target="_blank" href="https://www.learnj.de/doku.php?id=api:documentation:grafik:gui">GUI-Elemente (TextField, Checkbox, Radiobutton, Button)</a></li>
+                <li><a target="_blank" href="https://www.learnj.de/doku.php?id=api:documentation:files:start">Files-API zum lesenden/schreiben Zugriff auf Datendateien im Workspace</a></li>
+                <li><a target="_blank" href="https://www.learnj.de/doku.php?id=api:documentation:http:start">Http-Requests (=> Zugriff auf Online-APIs)</a></li>
+                <li><a target="_blank" href="https://www.learnj.de/doku.php?id=api:documentation:http:start#aufbereiten_der_json-daten_jsonparser">Json-Parser</a></li>
+            </ul>
+        </div> -->
+        <!-- <div id="beta-version">
+            <div></div>
+            <div> <a style="color: rgb(94, 136, 159)" href="https://www.learnj.de/1213/doku.php?id=anhang:assembler:start" target="_blank">Neu: Maschinenspracheprogrammierung in der Online-IDE</a></div>
+        </div> -->
+        <a class="isidigitaldiv silent" style="display: none" href="https://www.bildungspakt-bayern.de/isi-preistraeger-2022-gy-ingolstadt/"
+            target="_blank">
+            <img class="isidigitalimg" src="assets/graphics/isi_digital_2022.png"
+                alt="1. Preisträger beim isi Digital-Wettbewerb 2022" style="width: 300px">
+        </a>
+        <!-- <div id="login-heading" class="jo_login_div">Online-IDE</div> -->
+        <img src="assets/graphics/Logo1.png" alt="Logo der Online-IDE"
+            style="width: 250px; margin: 30px auto 10px auto">
+        <div style="flex-grow: 1" class="jo_login_div"></div>
+        <div class="jo_login_div">
+            <div id="login-center">
+                <input id="login-username" type="text" placeholder="Benutzername" spellcheck="false" tabindex="1">
+                <input id="login-password" type="password" placeholder="Passwort" spellcheck="false" tabindex="2">
+                <div id="login-message"></div>
+                <div id="login-button" tabindex="3">Login</div>
+            </div>
+        </div>
+        <div id="versionDiv" class="versionDiv"></div>
+        <div class="versionDiv silent" style="display: none"><a target="_blank" href="https://www.learnj.de/1213/doku.php?id=anhang:assembler:start">Neu: Maschinenspracheprogrammierung in der Online-IDE</a></div>
+        <div id="login-spinner" class="jo_login_div">
+            <img src="assets/graphics/ball-triangle.svg">
+        </div>
+        <div class="jo_infodiv silent" style="display: none">
+            <div class="jo_infodiv_line">
+                <a href="https://www.learnj.de/doku.php?id=api:ide_manual:start" target="_blank">
+                    <div class="jo_infodiv_box" id="jo_video_button">
+                        <img src="assets/graphics/film.png" class="jo_infobox_leftimage" alt="">
+                        <div>Video-Tutorials zur Online-IDE</div>
+                    </div>
+                </a>
+                <div class="jo_infodiv_box" id="jo_testuser-login-button">
+                    <img src="assets/graphics/test.png" class="jo_infobox_leftimage" alt="">
+                    <div>Login als Testuser (*)</div>
+                </div>
+                <a href="https://www.learnj.de/doku.php?id=ide:testlogins:start" target="_blank">
+                    <div class="jo_infodiv_box" id="jo_testlogins">
+                        <img src="assets/graphics/rocket.png" class="jo_infobox_leftimage" alt="">
+                        <div>Interessiert?<br>Kostenlose Testphase!</div>
+                    </div>
+                </a>
+            </div>
+            <div class="jo_infodiv_line">
+                <a href="https://www.learnj.de" target="_blank">
+                    <div class="jo_infodiv_box" id="jo_learnj">
+                        <img src="assets/graphics/learnj.png" class="jo_infobox_leftimage" alt="">
+                        <div>Interaktives Java-Tutorial</div>
+                    </div>
+                </a>
+                <a href="https://github.com/martin-pabst/Online-IDE-new-compiler" target="_blank">
+                    <div class="jo_infodiv_box" id="jo_embedded_ide">
+                        <img src="assets/graphics/forkme_left_green_007200.png" class="jo_infobox_forkme" alt="">
+                        <div style="font-size: 16pt;">Embedded<br> Java-IDE - auch für Ihre Homepage!</div>
+                    </div>
+                </a>
+                <a href="https://www.embed.learnj.de/createwrapper.html" target="_blank">
+                    <div class="jo_infodiv_box" id="jo_moodle_mebis">
+                        <img src="assets/graphics/moodle_mebis.png" class="jo_infobox_leftimage" alt="">
+                        <div style="font-size: 12pt;">Java programmieren innerhalb von Moodle-/Mebis-Kursen</div>
+                    </div>
+                </a>
+                <a href="https://www.sql-ide.de" target="_blank">
+                    <div class="jo_infodiv_box" id="jo_learnsql">
+                        <img src="assets/graphics/learn-sql.png" class="jo_infobox_leftimage" alt="">
+                        <div>
+                            <div style="font-size: 16pt;"><span style="color: rgb(226, 52, 52); font-weight: bold;">Neu:
+                                </span>SQL-IDE</div>
+                            <div style="font-size: 12pt;">(gleiche Zugangsdaten)</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div style="flex-grow: 4" class="jo_login_div">
+        </div>
+        <div id="login-footer">
+            <div class="silent" style="display: none; padding-left: 20px">
+                (*) Ohne Repository und Lehrkraft-Funktionen
+            </div>
+            <!-- <vidis-login
+                loginurl="https://aai-test.vidis.schule/auth/realms/vidis/protocol/openid-connect/auth?client_id=online-ide-o&response_type=code&scope=openid&redirect_uri=https://online-ide.de/vidisRedirect"
+                size="S" cookie="false"></vidis-login> -->
+            <div class="silent" style="display: none">
+                <!-- <a href="https://aai-test.vidis.schule/auth/realms/vidis/protocol/openid-connect/auth?client_id=online-ide-o&response_type=code&scope=openid&redirect_uri=https://online-ide.de/vidisRedirect">VIDIS-Test</a> -->
+                <a href="https://aai.vidis.schule/auth/realms/vidis/protocol/openid-connect/auth?client_id=online-ide-o&response_type=code&scope=openid&redirect_uri=https://online-ide.de/vidisRedirect">VIDIS-Prod (Test)</a> 
+            </div>
+            <div id="login-datenschutz">
+                <a href="https://www.learnj.de/doku.php?id=ide:datenschutzerklaerung"
+                    target="_blank">Datenschutzerklärung</a>
+                <a href="https://www.learnj.de/doku.php?id=ide:impressum" target="_blank">Impressum</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hauptseite -->
+
+    <div id="main">
+        <div id="code">
+            <div id="mainmenu">
+            </div>
+            <div id="belowmainmenu">
+                <div id="leftpanel">
+                    <!-- <div id="slider1" class="slider" draggable="false"></div> -->
+                    <div class="jo_projectexplorer">
+
+                        <!-- Explorer and tabs are program generated by class Accordion -->
+
+                    </div>
+                    <div class="jo_editorFontSize jo_debugger">
+
+                        <!-- Explorer and tabs are program generated by class Accordion -->
+
+                    </div>
+                </div>
+                <div id="editoranderrors">
+                    <div id="debugpanel">
+                        <div id="view-mode">
+
+                        </div>
+                        <div id="controls">
+                        </div>
+                        <div class="languageElement jo_button jo_active" title ="Auswahl der Sprache" style="margin-left: 10px"></div>
+                        <div id="buttonUserSettings" title="Benutzereinstellungen" 
+                            class="img_user jo_button jo_active"></div>
+                        <span id="menupanel-username" style="user-select: none"></span>
+                        <div id="buttonLogout" title="Logout" style="margin-left: 8px"
+                            class="img_disconnect-dark jo_button jo_active"></div>
+                    </div>
+                    <div id="diffEditor"></div>
+                    <div id="editor">
+                        <!-- <div class="editButton" title="Programm anhalten damit der Programmtext bearbeitbar wird"></div> -->
+                    </div>
+                    <div id="bottomdiv-outer">
+                        <!-- <div id="slider2" class="jo_slider" draggable="false"></div> -->
+                        <div class="jo_bottomdiv-inner">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="rightdiv" class="jo_editorFontSize" draggable="false">
+            <!-- <div id="slider3" class="jo_slider" draggable="false"></div> -->
+
+            <div id="rightdiv-inner">
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <div id="synchronize-div" style="display: none;"></div>
+    <div id="createRepo-div"></div>
+    <div id="updateRepo-div"></div>
+    <div id="checkoutRepo-div"></div>
+    <div id="spritemanager-div"></div>
+
+    <div id="dialog">
+    </div>
+
+</body>
+
+</html>
