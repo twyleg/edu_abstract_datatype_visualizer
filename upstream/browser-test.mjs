@@ -288,8 +288,9 @@ try{
  await page.waitForTimeout(900);
  const internalStackPositions=await page.locator('#view .react-flow__node').evaluateAll(nodes=>nodes.map(n=>{const m=new DOMMatrixReadOnly(n.style.transform);return [m.m41,m.m42];}));
  assert.equal(internalStackPositions.length,3);
- assert(internalStackPositions.every(p=>p[0]===internalStackPositions[0][0]));
- assert(internalStackPositions[0][1]<internalStackPositions[1][1]);
+ assert(internalStackPositions[0][0]<internalStackPositions[1][0]);
+ assert.equal(internalStackPositions[0][1],internalStackPositions[1][1]);
+ assert.equal(internalStackPositions[1][0],internalStackPositions[2][0]);
  assert(internalStackPositions[1][1]<internalStackPositions[2][1]);
  await page.locator('#mode').selectOption('abstract');
  await page.waitForFunction(()=>document.getElementById('view').textContent.includes('top · [0]'));

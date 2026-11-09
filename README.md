@@ -169,6 +169,7 @@ Stapel liefern beide Abfragen null; `isEmpty` liefert true.
 
 Der Adapter erkennt `Stapel` (auch `Stack` mit demselben Speicherlayout).
 Die abstrakte Ansicht zeigt die Inhalte senkrecht von oben (`top`) nach unten.
-Die interne Ansicht zeigt die tatsächlichen StackNode-Objekte ebenfalls senkrecht mit `content`,
+Die interne Ansicht zeigt das Stapelobjekt links neben der senkrechten Kette der
+tatsächlichen StackNode-Objekte mit `content`,
 `head` und `nextNode` samt Referenzpfeilen. Die Anzahl wird aus der erreichbaren
 Kette ermittelt; unvollständige Snapshots und Zyklen werden gekennzeichnet.
