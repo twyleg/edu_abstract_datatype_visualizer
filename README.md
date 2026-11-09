@@ -156,3 +156,17 @@ Die Quellen sind vollständig unter `upstream/` enthalten. Der Compiler bleibt u
 Beobachter an Anweisungsgrenzen und ein Signal für Ausführungsbefehle ergänzt;
 seine Anweisungsfunktionen und deren Ausführung werden weiterverwendet. Die neue Integration und ihre Änderungen sind vom
 27.10.2026 und stehen ebenfalls unter GPL-3.0-only; siehe `LICENSE`.
+
+## Stapel (Stack)
+
+Die editierbaren Dateien `Stapel.java` und `StackNode.java` sind ebenfalls in der
+IDE geladen (QUA-LiS NRW, Generisch_02). `examples/Stapel.java` kann als
+Startprogramm in den Editor kopiert werden. `push` ignoriert null, `top` liest
+ohne Änderung, `pop` entfernt und liefert den obersten Inhalt. Auf einem leeren
+Stapel liefern beide Abfragen null; `isEmpty` liefert true.
+
+Der Adapter erkennt `Stapel` (auch `Stack` mit demselben Speicherlayout).
+Die abstrakte Ansicht zeigt die Inhalte senkrecht von oben (`top`) nach unten.
+Die interne Ansicht zeigt die tatsächlichen StackNode-Objekte mit `content`,
+`head` und `nextNode` samt Referenzpfeilen. Die Anzahl wird aus der erreichbaren
+Kette ermittelt; unvollständige Snapshots und Zyklen werden gekennzeichnet.

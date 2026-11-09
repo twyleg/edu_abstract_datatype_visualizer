@@ -279,5 +279,33 @@ try{
  assert.equal((await position(insertionIds.c)).x,660);
  assert.equal((await position(insertedId)).x,330);
  console.log('PASS staged insertion: gap opens before the new node rises, neighbors settle first, zoom remains stable');
+ await load(await readFile(new URL('../examples/Stapel.java',import.meta.url),'utf8'));
+ for(let i=0;i<20;i++){await step();if(await page.locator('#container option').count()===2)break;}
+ await page.locator('#mode').selectOption('internal');
+ await page.waitForFunction(()=>document.getElementById('view').textContent.includes('nextNode'));
+ assert.match(await page.locator('#view').innerText(),/head/);
+ assert.equal(await page.locator('#container option').count(),2);
+ await page.locator('#mode').selectOption('abstract');
+ await page.waitForFunction(()=>document.getElementById('view').textContent.includes('top · [0]'));
+ await page.waitForTimeout(900);
+ const stackPositions=await page.locator('#view .react-flow__node').evaluateAll(nodes=>nodes.map(n=>{const m=new DOMMatrixReadOnly(n.style.transform);return [m.m41,m.m42];}));
+ assert.equal(stackPositions.length,2);
+ assert.equal(stackPositions[0][0],stackPositions[1][0]);
+ assert(stackPositions[0][1]<stackPositions[1][1]);
+ await run(30);
+ const stackSnapshots=await page.evaluate(()=>window.snapshots);
+ const unbox=(s,v)=>v?.ref?s.heap[v.ref]?.fields.value:v;
+ const contents=(s,o)=>{const values=[];let ref=o.fields.head;while(ref?.ref){const n=s.heap[ref.ref];if(!n)break;values.push(unbox(s,n.fields.content));ref=n.fields.nextNode;}return values;};
+ // Generic contents and String return values may be boxed runtime objects.
+ const sequences=stackSnapshots.flatMap(s=>objects(s,'Stapel').map(o=>contents(s,o)));
+ assert(sequences.some(v=>JSON.stringify(v)==='["Ben","Anna"]'));
+ assert(sequences.some(v=>JSON.stringify(v)==='["Anna"]'));
+ assert(sequences.some(v=>v.length===0));
+ for(const [name,value] of Object.entries({anfangsLeer:true,leerPop:null,oben:'Ben',zuerst:'Ben',danach:'Anna'})){
+  assert(stackSnapshots.some(s=>s.variables.some(v=>v.name===name&&unbox(s,v.value)===value)),`Missing stack result ${name}`);
+ }
+ assert(stackSnapshots.some(s=>{const a=s.variables.find(v=>v.name==='alias'),b=s.variables.find(v=>v.name==='stapel');return a?.value?.ref&&a.value.ref===b?.value?.ref;}));
+ assert(stackSnapshots.some(s=>s.variables.some(v=>v.name==='oben')&&objects(s,'Stapel').some(o=>contents(s,o).length===2)));
+ console.log('PASS NRW stack: real compiler/runtime, LIFO chain, empty stack, aliases and storage graph');
  assert.deepEqual(errors,[]);console.log('PASS no browser exceptions');
 }finally{await browser.close();}

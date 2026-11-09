@@ -3,11 +3,15 @@ import { installSplitPane } from './split-pane';
 import { snapshotHistory } from './snapshot-history';
 import { buildDiagram } from './flow-model';
 import { renderDiagram } from './flow-view';
+import stackSource from './Stapel.java?raw';
+import stackNodeSource from './StackNode.java?raw';
 import dynArraySource from './DynArray.java?raw';
 import './style.css';
 import type {Snapshot} from './runtime';
-import {arrayAdapter,dynArray} from './adapters';
+import {arrayAdapter,dynArray,linkedStack} from './adapters';
 document.querySelector('script[title="DynArray.java"]')!.textContent=dynArraySource;
+document.querySelector('script[title="Stapel.java"]')!.textContent=stackSource;
+document.querySelector('script[title="StackNode.java"]')!.textContent=stackNodeSource;
 let current:Snapshot|undefined, previous:Snapshot|undefined;
 let viewRevision=0;
 let historySource: {setHistoryLocation(location?: {file:string;line:number}):void; layoutEditor():void}|undefined;
@@ -21,7 +25,7 @@ function render(){
   renderDiagram(undefined,true,viewRevision);return;
  }
  const custom=arrayAdapter(ui.adapter.type,ui.adapter.array,ui.adapter.size||undefined);
- const containers=Object.values(current.heap).flatMap(o=>{const c=o.type==='DynArray'?dynArray(current!,o):custom.extract(current!,o);return c?[c]:[];});
+ const containers=Object.values(current.heap).flatMap(o=>{const c=dynArray(current!,o)??linkedStack.extract(current!,o)??custom.extract(current!,o);return c?[c]:[];});
  const selected=containers.some(c=>c.object.id===ui.selected)?ui.selected:containers[0]?.object.id??'';
  const options=containers.map(c=>{
   const names=current!.variables.filter(v=>v.value&&typeof v.value==='object'&&'ref' in v.value&&v.value.ref===c.object.id).map(v=>v.name);
@@ -33,7 +37,7 @@ function render(){
   messages:[...(c?.warnings??[]),...(current.truncated?['Objektinspektion begrenzt.']:[])]});
  if(!c){renderDiagram(undefined,history.instant,viewRevision);return;}
  const old=previous?.heap[c.object.id];
- const oldContainer=old?old.type==='DynArray'?dynArray(previous!,old):custom.extract(previous!,old):undefined;
+ const oldContainer=old?(dynArray(previous!,old)??linkedStack.extract(previous!,old)??custom.extract(previous!,old)):undefined;
  renderDiagram(buildDiagram(c,current,previous,oldContainer,ui.mode),history.instant,viewRevision);
 }
 subscribeVisualizerChoices(()=>{viewRevision++;render();});

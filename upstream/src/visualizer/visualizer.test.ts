@@ -215,3 +215,44 @@ describe('history scrubber navigation',()=>{
   history.seek(99);history.seek(NaN);expect(history.getState().cursor).toBe(3);expect(history.getState().total).toBe(4);
  });
 });
+
+import {linkedStack} from './adapters';
+describe('NRW stack visualization',()=>{
+ const snapshot=():any=>({state:'paused',variables:[],truncated:false,heap:{
+  a:{id:'a',type:'Stapel',fields:{head:{ref:'b'}}},
+  b:{id:'b',type:'StackNode',fields:{content:'Ben',nextNode:{ref:'c'}}},
+  c:{id:'c',type:'StackNode',fields:{content:'Anna',nextNode:null}}
+ }});
+ it('follows head in LIFO order and draws real storage pointers without mutation',()=>{
+  const s=snapshot(),before=JSON.stringify(s),c=linkedStack.extract(s,s.heap.a)!;
+  expect(c.elements).toEqual(['Ben','Anna']);expect(c.size).toBe(2);expect(c.warnings).toEqual([]);
+  const graph=buildDiagram(c,s,undefined,undefined,'internal');
+  expect(graph.edges.map(e=>[e.source,e.sourceHandle,e.target])).toEqual([['a','head','b'],['b','nextNode','c']]);
+  const abstract=buildDiagram(c,s,undefined,undefined,'abstract');
+  expect(abstract.nodes[0].data.title).toContain('top');
+  expect(abstract.nodes[1].position.y).toBeGreaterThan(abstract.nodes[0].position.y);
+  expect(abstract.nodes[1].position.x).toBe(abstract.nodes[0].position.x);
+  expect(JSON.stringify(s)).toBe(before);
+ });
+ it('retains survivor identity after pop and recognizes empty stacks',()=>{
+  const s=snapshot(),before=linkedStack.extract(s,s.heap.a)!;
+  const old=buildDiagram(before,s,undefined,undefined,'abstract');
+  s.heap.a.fields.head={ref:'c'};
+  const after=linkedStack.extract(s,s.heap.a)!;
+  expect(after.elements).toEqual(['Anna']);
+  expect(buildDiagram(after,s,undefined,before,'abstract').nodes[0].id).toBe(old.nodes[1].id);
+  s.heap.a.fields.head=null;
+  expect(linkedStack.extract(s,s.heap.a)).toMatchObject({size:0,elements:[],nodes:[],warnings:[]});
+ });
+ it('bounds cycles and reports missing or invalid links and content',()=>{
+  const s=snapshot();s.heap.c.fields.nextNode={ref:'b'};
+  expect(linkedStack.extract(s,s.heap.a)?.warnings.join()).toContain('Zyklus');
+  delete s.heap.c;
+  expect(linkedStack.extract(s,s.heap.a)?.warnings.join()).toContain('nicht im begrenzten Snapshot');
+  s.heap.b.fields.nextNode=42;delete s.heap.b.fields.content;
+  const c=linkedStack.extract(s,s.heap.a)!;
+  expect(c.warnings.join()).toContain('Ungültige');
+  expect(c.elements).toEqual([{unavailable:'Feld content fehlt'}]);
+  expect(linkedStack.extract(s,{id:'x',type:'Other',fields:{head:null}})).toBeUndefined();
+ });
+});

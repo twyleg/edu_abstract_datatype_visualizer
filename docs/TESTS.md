@@ -130,3 +130,12 @@ keine Cookies, Local-/Session-Storage-Einträge, IndexedDB-Datenbanken oder exte
 Startanfragen. Die Prüfung wurde mit dem lokalen Quellbaum über einen separaten
 Git-Testindex durchgeführt; der echte Git-Index blieb leer, es wurde kein Commit
 oder Push erzeugt. Der Pages-Workflow verwendet stattdessen den echten HEAD-Commit.
+
+## NRW-Stapel
+
+Drei zusätzliche Modultests prüfen die head-/nextNode-Kette, die senkrechte
+abstrakte Darstellung mit top-Markierung, echte Referenzpfeile, stabile
+Knotenidentität nach pop, leere Stapel sowie Zyklen und fehlende Snapshotdaten.
+Der Chromium-Test lädt `examples/Stapel.java` mit den mitgelieferten editierbaren
+Java-Klassen und prüft LIFO-Reihenfolge, Rückgabewerte von top/pop/isEmpty,
+null-/Leeroperationen, Aliase, mehrere Instanzen und beide Ansichten.
