@@ -258,3 +258,34 @@ describe('NRW stack visualization',()=>{
   expect(linkedStack.extract(s,{id:'x',type:'Other',fields:{head:null}})).toBeUndefined();
  });
 });
+
+import { objectRows, valueLabel } from './flow-model';
+describe('expandable object attributes', () => {
+ it('exposes copied fields and nested references in both diagram modes without traversing cycles', () => {
+  const person = { id: 'p', type: 'Person', fields: { name: 'Anna', value: 7, friend: { ref: 'p' }, missing: { ref: 'absent' }, nothing: null } };
+  const a = { id: 'a', type: 'DynArray', fields: {} };
+  const s: any = { heap: { a, p: person }, variables: [], state: 'paused', truncated: false };
+  const before = JSON.stringify(s);
+  expect(valueLabel({ ref: 'p' }, s)).toBe('Person @p');
+  const rows = objectRows({ ref: 'p' }, s)!;
+  expect(rows.map(r => r.name)).toEqual(['name', 'value', 'friend', 'missing', 'nothing']);
+  expect(rows[2].value).toEqual({ ref: 'p' });
+  expect(objectRows({ ref: 'absent' }, s)?.[0].text).toContain('nicht vollständig');
+  expect(objectRows(null, s)).toBeUndefined();
+  const c: any = { object: a, storage: { id: 'items', items: [{ ref: 'p' }] }, elements: [{ ref: 'p' }], size: 1, warnings: [] };
+  for (const mode of ['abstract', 'internal']) {
+   const diagram = buildDiagram(c, s, undefined, undefined, mode);
+   const row = diagram.nodes.flatMap(n => n.data.rows).find(r => r.value && typeof r.value === 'object' && 'ref' in r.value);
+   expect(row?.value).toEqual({ ref: 'p' });
+   expect(diagram.nodes.every(n => n.data.snapshot === s)).toBe(true);
+  }
+  expect(JSON.stringify(s)).toBe(before);
+ });
+ it('shows array entries, empty objects, truncation and changes from the selected previous snapshot', () => {
+  const s: any = { heap: { p: { fields: { age: 8 } }, arr: { fields: {}, items: [null, { ref: 'p' }], truncated: true }, empty: { fields: {} }, boxed: { type: 'Integer', fields: { value: 5 } } } };
+  expect(objectRows({ ref: 'p' }, s, { heap: { p: { fields: { age: 7 } } } } as any)?.[0].changed).toBe(true);
+  expect(objectRows({ ref: 'arr' }, s)?.map(r => r.name)).toEqual(['[0]', '[1]', 'Snapshot']);
+  expect(objectRows({ ref: 'empty' }, s)?.[0].text).toBe('Keine Attribute');
+  expect(valueLabel({ ref: 'boxed' }, s)).toBe('5 · @boxed');
+ });
+});

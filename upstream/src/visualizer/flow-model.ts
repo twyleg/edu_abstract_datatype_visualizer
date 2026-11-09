@@ -3,16 +3,32 @@ import type { Container } from './adapters';
 import { diff, key } from './adapters';
 import type { Snapshot, Value } from './runtime';
 
-export type FieldRow = { name: string; text: string; changed: boolean; reference: boolean };
-export type VisualNode = Node<{ title: string; rows: FieldRow[]; change: string; detached?: boolean; history?: boolean }, 'runtime'>;
+export type FieldRow = { name: string; text: string; changed: boolean; reference: boolean; value?: Value };
+export type VisualNode = Node<{ title: string; rows: FieldRow[]; change: string; detached?: boolean; history?: boolean; snapshot?: Snapshot; previous?: Snapshot }, 'runtime'>;
 export interface Diagram { nodes: VisualNode[]; edges: Edge[] }
+
+/** Read children on demand so aliases and cycles never expand the graph eagerly. */
+export function objectRows(value: Value, snapshot: Snapshot, previous?: Snapshot): FieldRow[] | undefined {
+  if (!value || typeof value !== 'object' || !('ref' in value)) return undefined;
+  const object = snapshot.heap[value.ref];
+  if (!object) return [{ name: 'Snapshot', text: 'Objekt nicht vollständig erfasst', changed: false, reference: false }];
+  const entries: [string, Value][] = object.items
+    ? object.items.map((item, index) => [`[${index}]`, item]) : Object.entries(object.fields);
+  const old = previous?.heap[value.ref];
+  const result: FieldRow[] = entries.map(([name, child], index) => ({
+    name, value: child, text: valueLabel(child, snapshot), reference: false,
+    changed: !!old && key(object.items ? old.items?.[index] : old.fields[name]) !== key(child),
+  }));
+  if (object.truncated) result.push({ name: 'Snapshot', text: 'Weitere Einträge nicht erfasst', reference: false, changed: false });
+  return result.length ? result : [{ name: 'Attribute', text: 'Keine Attribute', changed: false, reference: false }];
+}
 
 export function valueLabel(value: Value, snapshot: Snapshot): string {
   if (value && typeof value === 'object') {
     if ('unavailable' in value) return `⟨${value.unavailable}⟩`;
     const object = snapshot.heap[value.ref];
     const boxed = object?.fields.value;
-    return boxed !== undefined && (boxed === null || typeof boxed !== 'object')
+    return Object.keys(object?.fields ?? {}).length === 1 && boxed !== undefined && (boxed === null || typeof boxed !== 'object')
       ? `${String(boxed)} · @${value.ref}` : `${object?.type ?? 'Objekt'} @${value.ref}`;
   }
   return value === null ? 'null' : String(value);
@@ -23,12 +39,12 @@ export function buildDiagram(container: Container, snapshot: Snapshot, previous:
   oldContainer: Container | undefined, mode: string): Diagram {
   const nodes: VisualNode[] = [], edges: Edge[] = [];
   const rows = (id: string, fields: Record<string, Value>): FieldRow[] => Object.entries(fields).map(([name, value]) => ({
-    name, text: valueLabel(value, snapshot),
+    name, value, text: valueLabel(value, snapshot),
     changed: !!previous?.heap[id] && key(previous.heap[id].fields[name]) !== key(value),
     reference: !!value && typeof value === 'object' && 'ref' in value,
   }));
   const node = (id: string, title: string, fields: FieldRow[], x: number, y: number, change = 'same') => {
-    nodes.push({ id, type: 'runtime', position: { x, y }, data: { title, rows: fields, change } });
+    nodes.push({ id, type: 'runtime', position: { x, y }, data: { title, rows: fields, change, snapshot, previous } });
   };
   if (mode === 'abstract') {
     const delta = diff(oldContainer?.elements ?? [], container.elements);
@@ -37,7 +53,7 @@ export function buildDiagram(container: Container, snapshot: Snapshot, previous:
       const identity = container.nodes?.[index]?.id ?? key(value);
       const occurrence = occurrences.get(identity) ?? 0;
       occurrences.set(identity, occurrence + 1);
-      node(`item:${container.object.id}:${identity}:${occurrence}`, container.kind === 'stack' ? (index === 0 ? 'top · [0]' : `[${index}]`) : `[${index}]`, [{ name: 'Inhalt', text: valueLabel(value, snapshot), changed: false, reference: false }],
+      node(`item:${container.object.id}:${identity}:${occurrence}`, container.kind === 'stack' ? (index === 0 ? 'top · [0]' : `[${index}]`) : `[${index}]`, [{ name: 'Inhalt', value, text: valueLabel(value, snapshot), changed: false, reference: false }],
         container.kind === 'stack' ? 0 : index * 270, container.kind === 'stack' ? index * 150 : 0, delta.changes[index].kind);
     });
     return { nodes, edges };
@@ -69,7 +85,7 @@ export function buildDiagram(container: Container, snapshot: Snapshot, previous:
     for (const object of container.nodes) connect(object.id, object.fields, ['next', 'nextNode']);
   } else if (container.storage) {
     const storage = container.storage;
-    node(storage.id, `Array @${storage.id}`, (storage.items ?? []).map((value, index) => ({ name: `[${index}]`, text: valueLabel(value, snapshot),
+    node(storage.id, `Array @${storage.id}`, (storage.items ?? []).map((value, index) => ({ name: `[${index}]`, value, text: valueLabel(value, snapshot),
       changed: !!previous?.heap[storage.id] && key(previous.heap[storage.id].items?.[index]) !== key(value), reference: false })), 350, 0);
     for (const [name, value] of Object.entries(container.object.fields)) {
       if (value && typeof value === 'object' && 'ref' in value && value.ref === storage.id)

@@ -43,6 +43,7 @@ Die markierte Zeile ist jeweils die nächste Anweisung.
   und blenden aus. Noch über `current`/`last` referenzierte Knoten bleiben unter
   der Kette sichtbar; historische Ausblendungen sind als vorheriger Zustand
   gekennzeichnet. Die Systemeinstellung für reduzierte Bewegung wird beachtet.
+- Neben Objektreferenzen öffnet **▸** die Attribute direkt im Knoten; **▾** klappt sie wieder ein. Verschachtelte Objekte und Arrays lassen sich ebenfalls öffnen. Zyklen und nicht vollständig erfasste Objekte werden gekennzeichnet. Die Anzeige liest ausschließlich den ausgewählten Snapshot.
 - Im Diagramm: Knoten ziehen, Hintergrund verschieben, mit dem Mausrad zoomen
   oder die Zoom-/Einpassen-Schaltflächen verwenden. Das verändert ausschließlich
   die Darstellung. Zoom und Bildausschnitt bleiben während und nach Änderungen
