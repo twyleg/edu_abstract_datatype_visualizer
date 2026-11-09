@@ -228,6 +228,7 @@ describe('NRW stack visualization',()=>{
   expect(c.elements).toEqual(['Ben','Anna']);expect(c.size).toBe(2);expect(c.warnings).toEqual([]);
   const graph=buildDiagram(c,s,undefined,undefined,'internal');
   expect(graph.edges.map(e=>[e.source,e.sourceHandle,e.target])).toEqual([['a','head','b'],['b','nextNode','c']]);
+  expect(graph.nodes.map(n=>n.position)).toEqual([{x:0,y:0},{x:0,y:300},{x:0,y:600}]);
   const abstract=buildDiagram(c,s,undefined,undefined,'abstract');
   expect(abstract.nodes[0].data.title).toContain('top');
   expect(abstract.nodes[1].position.y).toBeGreaterThan(abstract.nodes[0].position.y);

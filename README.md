@@ -159,14 +159,16 @@ seine Anweisungsfunktionen und deren Ausführung werden weiterverwendet. Die neu
 
 ## Stapel (Stack)
 
-Die editierbaren Dateien `Stapel.java` und `StackNode.java` sind ebenfalls in der
+Die editierbare Datei `Stapel.java` enthält auch `StackNode` und ist in der
 IDE geladen (QUA-LiS NRW, Generisch_02). `examples/Stapel.java` kann als
-Startprogramm in den Editor kopiert werden. `push` ignoriert null, `top` liest
+Startprogramm in den Editor kopiert werden. Das geladene `Programm.java` zeigt
+DynArray und Stapel; `Stapel.java` und `DynArray.java` bieten außerdem jeweils
+eine `public static void main(String[] args)` zur schnellen Demonstration. `push` ignoriert null, `top` liest
 ohne Änderung, `pop` entfernt und liefert den obersten Inhalt. Auf einem leeren
 Stapel liefern beide Abfragen null; `isEmpty` liefert true.
 
 Der Adapter erkennt `Stapel` (auch `Stack` mit demselben Speicherlayout).
 Die abstrakte Ansicht zeigt die Inhalte senkrecht von oben (`top`) nach unten.
-Die interne Ansicht zeigt die tatsächlichen StackNode-Objekte mit `content`,
+Die interne Ansicht zeigt die tatsächlichen StackNode-Objekte ebenfalls senkrecht mit `content`,
 `head` und `nextNode` samt Referenzpfeilen. Die Anzahl wird aus der erreichbaren
 Kette ermittelt; unvollständige Snapshots und Zyklen werden gekennzeichnet.

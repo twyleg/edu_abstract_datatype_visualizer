@@ -285,6 +285,12 @@ try{
  await page.waitForFunction(()=>document.getElementById('view').textContent.includes('nextNode'));
  assert.match(await page.locator('#view').innerText(),/head/);
  assert.equal(await page.locator('#container option').count(),2);
+ await page.waitForTimeout(900);
+ const internalStackPositions=await page.locator('#view .react-flow__node').evaluateAll(nodes=>nodes.map(n=>{const m=new DOMMatrixReadOnly(n.style.transform);return [m.m41,m.m42];}));
+ assert.equal(internalStackPositions.length,3);
+ assert(internalStackPositions.every(p=>p[0]===internalStackPositions[0][0]));
+ assert(internalStackPositions[0][1]<internalStackPositions[1][1]);
+ assert(internalStackPositions[1][1]<internalStackPositions[2][1]);
  await page.locator('#mode').selectOption('abstract');
  await page.waitForFunction(()=>document.getElementById('view').textContent.includes('top · [0]'));
  await page.waitForTimeout(900);
@@ -307,5 +313,17 @@ try{
  assert(stackSnapshots.some(s=>{const a=s.variables.find(v=>v.name==='alias'),b=s.variables.find(v=>v.name==='stapel');return a?.value?.ref&&a.value.ref===b?.value?.ref;}));
  assert(stackSnapshots.some(s=>s.variables.some(v=>v.name==='oben')&&objects(s,'Stapel').some(o=>contents(s,o).length===2)));
  console.log('PASS NRW stack: real compiler/runtime, LIFO chain, empty stack, aliases and storage graph');
+ // Exercise both class entry points through the real JLearn compiler/runtime.
+ for(const type of ['Stapel','DynArray']){
+  await load(`${type}.main(new String[0]);`);
+  await step();
+  await page.locator('.img_step-into-dark.jo_button').click();
+  await page.waitForFunction(type=>window.snapshots.at(-1)?.state==='paused'&&window.snapshots.at(-1)?.location?.file===`${type}.java`,type);
+  await run(40);
+  const snapshots=await page.evaluate(()=>window.snapshots);
+  assert(snapshots.some(s=>objects(s,type).length>0),`Missing ${type} demo container`);
+  assert(snapshots.some(s=>s.location?.file===`${type}.java`),`Missing ${type} main execution`);
+ }
+ console.log('PASS Stapel and DynArray main demonstrations');
  assert.deepEqual(errors,[]);console.log('PASS no browser exceptions');
 }finally{await browser.close();}
