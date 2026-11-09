@@ -7,9 +7,30 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { FlowControls, HistoryControls } from './flow-controls';
-import type { Diagram, VisualNode } from './flow-model';
+import { objectRows, type Diagram, type VisualNode, type FieldRow } from './flow-model';
+import type { Snapshot } from './runtime';
 import { getAnimationSpeed, subscribeAnimationSpeed } from './animation-speed';
 import { planTransition, sampleTransition, TRANSITION_MS } from './flow-animation';
+
+function ObjectRow({ row, snapshot, previous, ancestors = [], handle = false }: {
+  row: FieldRow; snapshot?: Snapshot; previous?: Snapshot; ancestors?: string[]; handle?: boolean;
+}) {
+  const ref = row.value && typeof row.value === 'object' && 'ref' in row.value ? row.value.ref : undefined;
+  const [expandedRef, setExpandedRef] = useState<string>();
+  const expanded = !!ref && expandedRef === ref;
+  const cycle = !!ref && ancestors.includes(ref);
+  const children = expanded && snapshot && row.value !== undefined ? objectRows(row.value, snapshot, previous) : undefined;
+  return <div className={`runtime-row ${row.changed ? 'changed' : ''}`}>
+    <span>{row.name} = {row.text}</span>
+    {ref && snapshot && !cycle && <button type="button" className="object-toggle nodrag nopan"
+      aria-label={`${row.name}: Attribute ${expanded ? 'einklappen' : 'anzeigen'}`}
+      aria-expanded={expanded} onClick={() => setExpandedRef(expanded ? undefined : ref)}>{expanded ? '▾' : '▸'}</button>}
+    {cycle && <small className="object-cycle"> ↩ Zyklus · @{ref}</small>}
+    {children && <div className="object-fields">{children.map(child =>
+      <ObjectRow key={child.name} row={child} snapshot={snapshot} previous={previous} ancestors={[...ancestors, ref!]} />)}</div>}
+    {handle && row.reference && <Handle id={row.name} type="source" position={Position.Right} isConnectable={false} />}
+  </div>;
+}
 
 const RuntimeNode = memo(function RuntimeNode({ data }: NodeProps<VisualNode>) {
   return <div className={`runtime-node ${data.change}`}>
@@ -18,10 +39,7 @@ const RuntimeNode = memo(function RuntimeNode({ data }: NodeProps<VisualNode>) {
     <strong>{data.title}</strong>
     {data.history && <small className="runtime-status">Entfernt · vorheriger Zustand</small>}
     {data.detached && !data.history && <small className="runtime-status">Außerhalb der first-Kette · weiterhin referenziert</small>}
-    {data.rows.map(row => <div key={row.name} className={`runtime-row ${row.changed ? 'changed' : ''}`}>
-      <span>{row.name} = {row.text}</span>
-      {row.reference && <Handle id={row.name} type="source" position={Position.Right} isConnectable={false} />}
-    </div>)}
+    {data.rows.map(row => <ObjectRow key={row.name} row={row} snapshot={data.snapshot} previous={data.previous} handle />)}
   </div>;
 });
 const nodeTypes = { runtime: RuntimeNode };
