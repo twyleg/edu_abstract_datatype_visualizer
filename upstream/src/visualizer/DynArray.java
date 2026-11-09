@@ -48,6 +48,18 @@ class Node<ContentType>
 
 public class DynArray<ContentType>
 {
+    /** Kurze Demonstration der dynamischen Reihung. */
+    public static void main(String[] args)
+    {
+        DynArray<String> namen = new DynArray<String>();
+        namen.append("Anna");
+        namen.append("Clara");
+        namen.insertAt(1, "Ben");
+        println(namen.getItem(1));
+        namen.delete(0);
+        println(namen.getLength());
+    }
+
     private int size;
     private Node<ContentType> first;
     private Node<ContentType> last;

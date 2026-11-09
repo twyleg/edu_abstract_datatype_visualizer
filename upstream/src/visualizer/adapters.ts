@@ -1,5 +1,5 @@
 import type {Snapshot, Value, HeapObject} from './runtime';
-export interface Container {object:HeapObject; elements:Value[]; storage?:HeapObject; nodes?:HeapObject[]; size:number; capacity?:number; warnings:string[]}
+export interface Container {object:HeapObject; kind?:'stack'; elements:Value[]; storage?:HeapObject; nodes?:HeapObject[]; size:number; capacity?:number; warnings:string[]}
 export interface Adapter {name:string; extract(snapshot:Snapshot,object:HeapObject):Container|undefined}
 export function arrayAdapter(type:string,arrayField:string,sizeField?:string):Adapter {
  return {name:type,extract(snapshot,object){
@@ -54,3 +54,22 @@ export function diff(before:Value[],after:Value[]){
  const changes=after.map((v,i)=>{let from=before.findIndex((b,j)=>!used.has(j)&&j===i&&key(b)===key(v));if(from<0)from=before.findIndex((b,j)=>!used.has(j)&&key(b)===key(v));if(from<0)return {kind:'inserted',from:-1};used.add(from);return {kind:from===i?'same':'moved',from};});
  return {changes,removed:before.filter((_,i)=>!used.has(i))};
 }
+
+/** Read the supplied NRW stack directly, without calling Java methods. */
+export const linkedStack:Adapter={name:'Stapel (NRW)',extract(snapshot,object){
+ if(!['Stapel','Stack'].includes(object.type)||!('head' in object.fields))return;
+ const warnings:string[]=[],elements:Value[]=[],nodes:HeapObject[]=[];
+ const seen=new Set<string>();
+ let link=object.fields.head;
+ while(link!==null){
+  if(!link||typeof link!=='object'||!('ref' in link)){warnings.push('Ungültige Knotenreferenz.');break;}
+  if(seen.has(link.ref)){warnings.push(`Zyklus bei @${link.ref}.`);break;}
+  seen.add(link.ref);
+  const node=snapshot.heap[link.ref];
+  if(!node){warnings.push(`Knoten @${link.ref} nicht im begrenzten Snapshot enthalten.`);break;}
+  nodes.push(node);
+  elements.push(node.fields.content===undefined?{unavailable:'Feld content fehlt'}:node.fields.content);
+  link=node.fields.nextNode;
+ }
+ return {object,kind:'stack',elements,nodes,size:elements.length,warnings};
+}};
