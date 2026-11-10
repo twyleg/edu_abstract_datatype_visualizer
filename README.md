@@ -125,7 +125,8 @@ ersetzt Java-Quelltext im Monaco-Editor und prüft die tatsächlich erzeugten
 Snapshots. `VISUALIZER_URL` kann eine andere Adresse angeben. Der Build benötigt
 wegen der vollständigen IDE mehrere GB RAM (Node-Heaplimit: 6 GB).
 `test:editor` prüft separat die Texteingabe mit wiederholten und führenden
-Leerzeichen, Rückschritt und explizitem Punkt. Betriebssystemabhängige
+Leerzeichen, das Unterbinden nativer Leerzeichen-Eingabe, Kompositionseingabe,
+Mehrfachauswahl, Rückgängig, Schreibschutz, Rückschritt und explizitem Punkt. Betriebssystemabhängige
 Doppelleerzeichen-Ersetzungen müssen zusätzlich manuell in Chrome geprüft werden.
 
 Die fertige statische Anwendung liegt in `upstream/dist-visualizer/`, Einstieg

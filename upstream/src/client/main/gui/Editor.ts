@@ -55,7 +55,7 @@ export class Editor {
 
         this.editor = monaco.editor.create($element[0], {
             // Use Monaco's textarea input to avoid Chrome EditContext whitespace
-            // handling and native double-space punctuation in source code.
+            // handling. Plain Space keys are handled below to avoid native punctuation.
             editContext: false,
             // value: [
             //     'function x() {',
@@ -144,6 +144,22 @@ export class Editor {
 
         }
         );
+
+        const spaceKeyListener = this.editor.onKeyDown(event => {
+            const nativeEvent = event.browserEvent;
+            if (event.keyCode !== monaco.KeyCode.Space || event.ctrlKey || event.metaKey
+                || event.altKey || nativeEvent.isComposing || nativeEvent.keyCode === 229
+                || nativeEvent.defaultPrevented || this.editor.getOption(monaco.editor.EditorOption.readOnly)) {
+                return;
+            }
+
+            // Cancel the browser's text insertion so OS double-space substitution
+            // cannot turn source whitespace into ". ". Monaco's type command keeps
+            // selections, multiple cursors and undo behavior consistent with typing.
+            event.preventDefault();
+            this.editor.trigger('keyboard', 'type', { text: ' ' });
+        });
+        this.editor.onDidDispose(() => spaceKeyListener.dispose());
 
         // un-bind F12:
         // https://github.com/microsoft/monaco-editor/issues/287
