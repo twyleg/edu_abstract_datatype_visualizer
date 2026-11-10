@@ -116,6 +116,7 @@ cd upstream
 npx playwright install chromium
 cd ..
 npm run test:browser
+npm run test:editor
 npm run build
 ```
 
@@ -123,6 +124,10 @@ Der Browsertest nutzt echtes Chromium, bedient die originale IDE-Steuerleiste,
 ersetzt Java-Quelltext im Monaco-Editor und prüft die tatsächlich erzeugten
 Snapshots. `VISUALIZER_URL` kann eine andere Adresse angeben. Der Build benötigt
 wegen der vollständigen IDE mehrere GB RAM (Node-Heaplimit: 6 GB).
+`test:editor` prüft separat die Texteingabe mit wiederholten und führenden
+Leerzeichen, das Unterbinden nativer Leerzeichen-Eingabe, Kompositionseingabe,
+Mehrfachauswahl, Rückgängig, Schreibschutz, Rückschritt und explizitem Punkt. Betriebssystemabhängige
+Doppelleerzeichen-Ersetzungen müssen zusätzlich manuell in Chrome geprüft werden.
 
 Die fertige statische Anwendung liegt in `upstream/dist-visualizer/`, Einstieg
 `index.html` oder `visualizer.html`. Diesen Ordner vollständig auf statischem Webhosting ablegen;
