@@ -54,6 +54,9 @@ export class Editor {
         let settings = this.main.getSettings();
 
         this.editor = monaco.editor.create($element[0], {
+            // Use Monaco's textarea input to avoid Chrome EditContext whitespace
+            // handling and native double-space punctuation in source code.
+            editContext: false,
             // value: [
             //     'function x() {',
             //     '\tconsole.log("Hello world!");',
