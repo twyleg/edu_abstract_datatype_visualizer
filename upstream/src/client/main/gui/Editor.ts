@@ -55,7 +55,7 @@ export class Editor {
 
         this.editor = monaco.editor.create($element[0], {
             // Use Monaco's textarea input to avoid Chrome EditContext whitespace
-            // handling. Plain Space keys are handled below to avoid native punctuation.
+            // handling. Native punctuation replacements are handled below.
             editContext: false,
             // value: [
             //     'function x() {',
@@ -145,21 +145,34 @@ export class Editor {
         }
         );
 
-        const spaceKeyListener = this.editor.onKeyDown(event => {
-            const nativeEvent = event.browserEvent;
-            if (event.keyCode !== monaco.KeyCode.Space || event.ctrlKey || event.metaKey
-                || event.altKey || nativeEvent.isComposing || nativeEvent.keyCode === 229
-                || nativeEvent.defaultPrevented || this.editor.getOption(monaco.editor.EditorOption.readOnly)) {
+        // The host survives model switches, which recreate Monaco's view DOM.
+        const editorNode = $element[0];
+        const preventDoubleSpacePeriod = (event: InputEvent) => {
+            // Native text services can replace a space with ". " without a Space
+            // keydown. Handle that replacement before Monaco reads the textarea.
+            // Ordinary periods, paste, and IME composition must remain untouched.
+            if (!(event.target instanceof HTMLTextAreaElement)
+                || !event.target.classList.contains('inputarea')
+                || !event.cancelable || event.defaultPrevented || event.isComposing
+                || !['insertText', 'insertReplacementText'].includes(event.inputType)
+                || event.data !== '. '
+                || this.editor.getOption(monaco.editor.EditorOption.readOnly)) {
+                return;
+            }
+            const model = this.editor.getModel();
+            const selections = this.editor.getSelections();
+            if (!model || !selections?.length || !selections.every(selection =>
+                selection.isEmpty() && selection.startColumn > 1
+                && model.getLineContent(selection.startLineNumber)[selection.startColumn - 2] === ' ')) {
                 return;
             }
 
-            // Cancel the browser's text insertion so OS double-space substitution
-            // cannot turn source whitespace into ". ". Monaco's type command keeps
-            // selections, multiple cursors and undo behavior consistent with typing.
             event.preventDefault();
             this.editor.trigger('keyboard', 'type', { text: ' ' });
-        });
-        this.editor.onDidDispose(() => spaceKeyListener.dispose());
+        };
+        editorNode.addEventListener('beforeinput', preventDoubleSpacePeriod, true);
+        this.editor.onDidDispose(() =>
+            editorNode.removeEventListener('beforeinput', preventDoubleSpacePeriod, true));
 
         // un-bind F12:
         // https://github.com/microsoft/monaco-editor/issues/287
